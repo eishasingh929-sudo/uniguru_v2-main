@@ -135,10 +135,12 @@ class KoshaRetriever:
                     "signal_id": f"signal_{signal_id_hash}",
                     "type": "string",
                     "content": entry.content,
-                    "source": entry.source,  # file name only
+                    "source": entry.source,
                     "confidence": confidence,
+                    "tags": entry.tags or [],
+                    "domain": entry.domain,
                     "trace": {
-                        "knowledge_id": entry.source,  # file name only
+                        "knowledge_id": entry.knowledge_id,
                         "method": "kosha_retrieval",
                     },
                 }
