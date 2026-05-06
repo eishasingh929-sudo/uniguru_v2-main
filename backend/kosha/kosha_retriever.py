@@ -2,10 +2,14 @@ import re
 from typing import List, Dict, Any
 import hashlib
 from .kosha_validator import KoshaEntry
+from ontology.entity_resolver import CanonicalEntityResolver
+from retrieval.ontology_retriever import OntologyAwareRetriever
 
 class KoshaRetriever:
     def __init__(self, entries: List[KoshaEntry]):
         self.entries = entries
+        self.entity_resolver = CanonicalEntityResolver()
+        self.ontology_retriever = OntologyAwareRetriever()
 
     def _detect_domain(self, query: str) -> str:
         """
@@ -84,9 +88,13 @@ class KoshaRetriever:
         query_normalized = query.lower()
         raw_query_terms = re.findall(r"\b\w+\b", query_normalized)
         query_words = {t for t in raw_query_terms if len(t) > 2 and t not in STOPWORDS}
+        query_words.update(self.entity_resolver.expand_terms(query))
         
         if not domain:
-            domain = self._detect_domain(query)
+            domain_resolution = self.entity_resolver.resolve_domain(query)
+            domain = domain_resolution["domain"] if domain_resolution["domain"] != "general" else self._detect_domain(query)
+        else:
+            domain_resolution = self.entity_resolver.resolve_domain(query, domain_hint=domain)
 
         scored_entries: List[tuple[float, KoshaEntry]] = []
 
@@ -115,18 +123,26 @@ class KoshaRetriever:
             # Kosha confidence rule: similarity_score OR tag_match_score.
             base_match_score = max(tag_match_score, similarity_score)
 
-            # Optional tiny boost when domain matches (does not hard-filter).
-            domain_boost = 0.05 if domain and entry.domain == domain else 0.0
-            match_score = min(1.0, base_match_score + domain_boost)
+            candidate = {
+                "content": entry.content,
+                "tags": entry.tags or [],
+                "source": entry.source,
+                "domain": entry.domain,
+            }
+            ontology_score = self.ontology_retriever.score(query, candidate)
+
+            # Domain agreement is part of the score, not a silent hard filter.
+            domain_boost = 0.05 if domain and str(entry.domain).lower() == str(domain).lower() else 0.0
+            match_score = min(1.0, max(base_match_score, ontology_score["combined_score"]) + domain_boost)
 
             if match_score > 0 and str(entry.content).strip():
-                scored_entries.append((match_score, entry))
+                scored_entries.append((match_score, entry, ontology_score))
 
         # Sort descending deterministically by match_score, then timestamp, then knowledge_id.
         scored_entries.sort(key=lambda x: (x[0], x[1].timestamp, x[1].knowledge_id), reverse=True)
 
         signals: List[Dict[str, Any]] = []
-        for rank, (match_score, entry) in enumerate(scored_entries):
+        for rank, (match_score, entry, ontology_score) in enumerate(scored_entries):
             signal_id_hash = hashlib.md5(f"{entry.knowledge_id}_{entry.source}_{rank}".encode()).hexdigest()[:12]
             confidence = float(min(1.0, max(match_score, 0.0)))
 
@@ -139,9 +155,11 @@ class KoshaRetriever:
                     "confidence": confidence,
                     "tags": entry.tags or [],
                     "domain": entry.domain,
+                    "ontology_score": ontology_score,
                     "trace": {
                         "knowledge_id": entry.knowledge_id,
-                        "method": "kosha_retrieval",
+                        "method": "ontology_aware_kosha_retrieval",
+                        "domain_resolution": domain_resolution,
                     },
                 }
             )

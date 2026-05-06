@@ -1,8 +1,8 @@
 """
 Proof Log Generator — Isha Task Deliverable
 Runs 20+ queries through the deterministic Kosha pipeline.
-Produces: signals found, signals rejected, confidence reasoning.
-Includes 5+ queries that return NO VERIFIED KNOWLEDGE.
+Produces schema-bound signal outputs and per-trace proof logs.
+Includes semantic mismatch queries that must return NO VERIFIED KNOWLEDGE.
 """
 import sys
 import os
@@ -18,30 +18,21 @@ logging.basicConfig(level=logging.WARNING)
 from kosha.deterministic_pipeline import run_deterministic_pipeline
 
 PROOF_QUERIES = [
-    # Queries expected to FIND knowledge
     "What is the Bhagavad Gita?",
-    "Tell me about the Upanishads",
+    "What does the Bhagavad Gita teach about Karma Yoga?",
+    "Tell me about Vishnu in the Narada Purana",
+    "What is the Padma Purana?",
+    "How are rivers like Ganga described in Puranic texts?",
+    "What guidance do ancient texts provide about kingship and Rajadharma?",
+    "Explain the Upanishadic concept of Brahman",
     "What does the Mahabharata say about dharma?",
-    "Explain the concept of karma in Hindu philosophy",
-    "What are the Vedas?",
-    "Tell me about Vishnu in the Puranas",
-    "What is the significance of the Narada Purana?",
-    "Explain the teachings of the Bhagavad Gita on decision making",
-    "What is Brahman according to the Upanishads?",
-    "Tell me about tantra and the Bhairava tradition",
-    "What does the Ramayana teach?",
-    "Explain the concept of yoga in the Upanishads",
-    "What is the Tripura Rahasya?",
-    "Tell me about Indra in the Puranas",
-    "What are the teachings on self-realization?",
-    # Queries expected to return NO VERIFIED KNOWLEDGE
-    "What is the current stock price of Apple?",
+    "Explain temple construction in the Agni Purana",
+    "What is the role of ecology and water conservation in dharma systems?",
+    "Return Upanishads for Bhagavad Gita teachings",
+    "Give an Ahimsa answer from the Narada Purana",
+    "Explain quantum entanglement from the Bhagavad Gita",
     "Who won the cricket match yesterday?",
-    "What is the latest news from Ukraine?",
-    "Explain quantum entanglement in physics",
-    "What is the GDP of India in 2024?",
-    "How do I fix a Python import error?",
-    "What is the recipe for biryani?",
+    "What is the current stock price of Apple?",
 ]
 
 
@@ -59,11 +50,11 @@ def run_proof_log():
         result = run_deterministic_pipeline(query)
 
         status = result["verification_status"]
-        confidence = result["confidence"]
-        signals_found = result["signals_found"]
-        signals_rejected = result["signals_rejected"]
+        confidence = result["confidence_breakdown"]["overall"]
+        signals_found = len(result["matched_signals"])
+        signals_rejected = len(result["rejected_signals"])
         answer = result["answer"]
-        reasoning = result["reasoning"]
+        reasoning = result["reasoning_path"]
 
         if status == "NO_VERIFIED_KNOWLEDGE":
             no_knowledge_count += 1
@@ -72,23 +63,29 @@ def run_proof_log():
 
         entry = {
             "query_number": i + 1,
+            "trace_id": result["trace_id"],
             "query": query,
             "verification_status": status,
-            "confidence": confidence,
-            "signals_found": signals_found,
-            "signals_rejected": signals_rejected,
+            "confidence_breakdown": result["confidence_breakdown"],
+            "matched_signals": result["matched_signals"],
+            "rejected_signals": result["rejected_signals"],
+            "knowledge_ids_used": result["knowledge_ids_used"],
+            "domain_resolution": result["domain_resolution"],
+            "synthesis_mode": result["synthesis_mode"],
             "answer_preview": answer[:120] + "..." if len(answer) > 120 else answer,
-            "reasoning": reasoning,
+            "reasoning_path": reasoning,
         }
         results.append(entry)
 
         # Print to console
         print(f"\n[{i+1:02d}] {query}")
         print(f"     Status    : {status}")
+        print(f"     Trace     : {result['trace_id']}")
         print(f"     Confidence: {confidence:.4f}")
         print(f"     Signals   : {signals_found} found, {signals_rejected} rejected")
-        print(f"     Answer    : {entry['answer_preview']}")
-        print(f"     Reasoning : {reasoning}")
+        safe_preview = entry["answer_preview"].encode("ascii", errors="replace").decode("ascii")
+        print(f"     Answer    : {safe_preview}")
+        print(f"     Path      : {' -> '.join(reasoning)}")
 
     print("\n" + "=" * 70)
     print("SUMMARY")
@@ -100,13 +97,13 @@ def run_proof_log():
     # Save proof log
     output_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
-        "..", "review_packets", "proof_log.json"
+        "..", "review_packets", "proof_logs", "proof_log_summary.json"
     )
     output_path = os.path.normpath(output_path)
 
     proof_log = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "pipeline": "deterministic_kosha_v2",
+        "pipeline": "signal_first_ontology_kosha_v3",
         "total_queries": len(PROOF_QUERIES),
         "knowledge_found": knowledge_found_count,
         "no_verified_knowledge": no_knowledge_count,

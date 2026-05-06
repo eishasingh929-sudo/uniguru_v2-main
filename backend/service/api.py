@@ -1964,7 +1964,14 @@ def _execute_kosha_pipeline(
     domain_hint: Optional[str],
     top_k: int,
     allow_generated_verse: bool = False,
+    trace_id: Optional[str] = None,
 ) -> Dict[str, Any]:
+    from kosha.deterministic_pipeline import run_deterministic_pipeline
+
+    # TANTRA preparation boundary: this endpoint emits the schema-bound signal
+    # contract only. It must not call FAISS or LLM synthesis before validation.
+    return run_deterministic_pipeline(query=query, domain_hint=domain_hint, trace_id=trace_id)
+
     from kosha.kosha_loader import KoshaLoader
     from kosha.kosha_retriever import KoshaRetriever
     from kosha.kosha_validator import KoshaEntry
@@ -2278,14 +2285,15 @@ def new_query_endpoint(request: CoreRequest, token: HTTPAuthorizationCredentials
             domain_hint=request.context.get("domain") if isinstance(request.context, dict) else None,
             top_k=5,
             allow_generated_verse=bool(request.allow_generated_verse),
+            trace_id=request.request_id,
         )
 
         log_to_bucket(
             event_id=request.request_id,
             query=request.query,
-            signals_used=len(final_payload.get("signals", [])),
-            final_answer=final_payload.get("final_answer", ""),
-            confidence=final_payload.get("kosha_entry", {}).get("confidence", 0.0),
+            signals_used=len(final_payload.get("matched_signals", [])),
+            final_answer=final_payload.get("answer", ""),
+            confidence=final_payload.get("confidence_breakdown", {}).get("overall", 0.0),
             system_path="/new_query_6phase_pipeline"
         )
 

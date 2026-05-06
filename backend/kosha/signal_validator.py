@@ -1,6 +1,7 @@
 import re
 import logging
 from typing import List, Dict, Any, Optional, Tuple
+from ontology.entity_resolver import CanonicalEntityResolver
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,8 @@ STOPWORDS = {
 # Minimum thresholds for signal acceptance
 MIN_SIGNAL_CONFIDENCE = 0.15
 MIN_TAG_OVERLAP = 1  # At least 1 tag must match query
+MIN_SEMANTIC_SCORE = 0.28
+MIN_ENTITY_OVERLAP_WHEN_ENTITY_QUERY = 0.5
 
 
 class SignalValidator:
@@ -83,11 +86,30 @@ class SignalValidator:
             "tag_match_score": 0.0,
             "content_overlap": 0.0,
             "matched_tags": [],
+            "semantic_score": 0.0,
+            "concept_overlap": 0.0,
+            "entity_overlap": 0.0,
+            "domain_consistency": 0.0,
+            "contextual_proximity": 0.0,
+            "query_entities": [],
+            "candidate_entities": [],
+            "missing_required_entities": [],
+            "confidence_derivation": {},
         }
 
         # Rule 1: Content must exist and be non-empty
         if not content or len(content) < 10:
             return False, "empty_or_short_content", details
+
+        non_answer_markers = (
+            "not explicitly mentioned",
+            "not provided in the given context",
+            "not provided in the context",
+            "i don't know",
+            "cannot be answered from the provided context",
+        )
+        if any(marker in content.lower() for marker in non_answer_markers):
+            return False, "low_contextual_overlap", details
 
         # Rule 2: Confidence must meet minimum threshold
         if confidence < MIN_SIGNAL_CONFIDENCE:
@@ -102,12 +124,68 @@ class SignalValidator:
         content_overlap = cls.compute_content_overlap(query_tokens, content)
         details["content_overlap"] = content_overlap
 
+        semantic = signal.get("ontology_score")
+        if not isinstance(semantic, dict):
+            semantic = cls.entity_resolver.semantic_scores(
+                query=query,
+                content=content,
+                tags=tags,
+                source=source,
+                domain=str(signal.get("domain") or ""),
+            )
+        for key in (
+            "semantic_score",
+            "concept_overlap",
+            "entity_overlap",
+            "domain_consistency",
+            "contextual_proximity",
+            "query_entities",
+            "candidate_entities",
+            "domain_resolution",
+            "missing_required_entities",
+        ):
+            if key in semantic:
+                details[key] = semantic[key]
+
+        details["confidence_derivation"] = {
+            "retrieval_confidence": round(confidence, 4),
+            "tag_match_score": tag_score,
+            "content_overlap": content_overlap,
+            "semantic_score": float(details["semantic_score"]),
+            "entity_overlap": float(details["entity_overlap"]),
+            "domain_consistency": float(details["domain_consistency"]),
+            "formula": "0.25*retrieval + 0.25*tag + 0.2*content + 0.3*semantic",
+            "derived_confidence": round(
+                (0.25 * confidence)
+                + (0.25 * tag_score)
+                + (0.2 * content_overlap)
+                + (0.3 * float(details["semantic_score"])),
+                4,
+            ),
+        }
+
         # Accept if EITHER tag match OR content overlap is sufficient
         has_tag_match = len(matched_tags) >= MIN_TAG_OVERLAP
         has_content_match = content_overlap > 0.1
 
         if not has_tag_match and not has_content_match:
             return False, "no_query_relevance:tags_and_content_both_miss", details
+
+        query_entities = details.get("query_entities") or []
+        if details.get("missing_required_entities"):
+            return False, "entity_conflict", details
+
+        if query_entities and float(details["entity_overlap"]) < MIN_ENTITY_OVERLAP_WHEN_ENTITY_QUERY:
+            return False, "entity_conflict", details
+
+        if float(details["domain_consistency"]) <= 0.0:
+            return False, "domain_mismatch", details
+
+        if float(details["semantic_score"]) < MIN_SEMANTIC_SCORE:
+            return False, "weak_semantic_alignment", details
+
+        if content_overlap <= 0.1 and float(details["contextual_proximity"]) < 0.5:
+            return False, "low_contextual_overlap", details
 
         return True, "valid", details
 
@@ -129,7 +207,7 @@ class SignalValidator:
         for signal in signals:
             is_valid, reason, details = cls.validate_signal(signal, query, query_tokens)
             if is_valid:
-                accepted.append({**signal, "_validation": details})
+                accepted.append({**signal, "confidence": details["confidence_derivation"]["derived_confidence"], "_validation": details})
             else:
                 rejected.append({
                     "signal_id": signal.get("signal_id", "unknown"),
@@ -201,9 +279,11 @@ class AnswerSynthesizer:
             "signals_rejected": len(rejected),
             "source": source,
             "reasoning": (
-                f"Signal matched via tags {validation.get('matched_tags', [])} "
-                f"with content overlap {validation.get('content_overlap', 0):.2f}. "
-                f"Confidence: {confidence:.3f}."
+                f"Accepted signal because tags {validation.get('matched_tags', [])}, "
+                f"content overlap {validation.get('content_overlap', 0):.2f}, "
+                f"entity overlap {validation.get('entity_overlap', 0):.2f}, "
+                f"domain consistency {validation.get('domain_consistency', 0):.2f}, "
+                f"and derived confidence {confidence:.3f} met deterministic thresholds."
             ),
         }
 
@@ -226,3 +306,4 @@ class AnswerSynthesizer:
                 text = text[:last_period + 1]
 
         return text.strip() or NO_KNOWLEDGE_RESPONSE
+    entity_resolver = CanonicalEntityResolver()
