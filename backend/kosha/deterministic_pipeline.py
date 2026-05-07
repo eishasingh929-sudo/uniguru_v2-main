@@ -13,6 +13,8 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List
 
+from governance.contradiction import ContradictionConsensusEngine
+from governance.epistemic_confidence import EpistemicConfidenceEngine
 from kosha.kosha_loader import KoshaLoader
 from kosha.kosha_retriever import KoshaRetriever
 from kosha.kosha_enforcer import KoshaEnforcer
@@ -61,6 +63,28 @@ def _write_proof_log(trace_id: str, payload: Dict[str, Any]) -> None:
         json.dump(payload, handle, indent=2, ensure_ascii=True, sort_keys=True)
 
 
+def _bucket_contract(trace_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "event": "tantra_uniguru_intelligence_contract",
+        "trace_id": trace_id,
+        "trace_continuity": {
+            "retrieval": trace_id,
+            "validation": trace_id,
+            "synthesis": trace_id,
+            "contract_emission": trace_id,
+            "downstream_execution": trace_id,
+            "bucket_proof": trace_id,
+            "immutable": True,
+        },
+        "accepted_signals": [signal.get("signal_id") for signal in payload.get("matched_signals", [])],
+        "rejected_signals": [signal.get("signal_id") for signal in payload.get("rejected_signals", [])],
+        "confidence_derivation": payload.get("confidence_breakdown", {}),
+        "semantic_path": payload.get("semantic_path", []),
+        "verification_status": payload.get("verification_status"),
+        "timestamp": payload.get("generated_at"),
+    }
+
+
 def run_deterministic_pipeline(
     query: str,
     domain_hint: Optional[str] = None,
@@ -107,19 +131,51 @@ def run_deterministic_pipeline(
             "answer": NO_KNOWLEDGE_RESPONSE,
             "enforcement_stats": enforcement_result,
             "fallback_to_llm": False,
+            "output_contract": {
+                "schema": "TANTRA_UNIGURU_INTELLIGENCE_CONTRACT_V1",
+                "contract_bound": True,
+                "downstream_consumable": True,
+                "free_form_output": False,
+                "trace_id": trace_id,
+            },
+            "downstream_execution": {
+                "consumer": "TANTRA_EXECUTION_CHAIN",
+                "status": "REJECTED_NO_DOWNSTREAM_ACTION",
+                "trace_id": trace_id,
+            },
             "generated_at": started_at,
         }
+        payload["bucket_proof"] = _bucket_contract(trace_id, payload)
         _write_proof_log(trace_id, payload)
         return payload
 
     # Phase 2 (retrieval): Get candidate signals from valid entries
     retriever = KoshaRetriever(valid_entries)
     raw_signals, detected_domain = retriever.retrieve(query=query, domain=domain_hint)
+    for signal in raw_signals:
+        signal.setdefault("trace", {})["trace_id"] = trace_id
 
     # Phase 4: Deterministic signal validation
     validation_result = SignalValidator.validate_all(
         signals=raw_signals,
         query=query,
+    )
+    consensus = ContradictionConsensusEngine.analyze(validation_result["accepted_signals"])
+    for signal in validation_result["accepted_signals"]:
+        validation = signal.get("_validation", {})
+        source_governance = validation.get("source_governance") or signal.get("source_governance") or {}
+        epistemic = EpistemicConfidenceEngine.derive(
+            retrieval_confidence=float(validation.get("confidence") or signal.get("confidence") or 0.0),
+            validation_details=validation,
+            source_governance=source_governance,
+            consensus=consensus,
+        )
+        validation.setdefault("confidence_derivation", {})["epistemic_confidence"] = epistemic
+        validation["confidence_derivation"]["derived_confidence"] = epistemic["score"]
+        signal["confidence"] = epistemic["score"]
+    validation_result["accepted_signals"].sort(
+        key=lambda s: float(s.get("confidence") or 0.0),
+        reverse=True,
     )
 
     # Phase 6: deterministic synthesis from accepted signals only.
@@ -144,6 +200,8 @@ def run_deterministic_pipeline(
             "domain": s.get("domain"),
             "content": s.get("content"),
             "knowledge_id": s.get("trace", {}).get("knowledge_id"),
+            "source_governance": s.get("source_governance", {}),
+            "trace": s.get("trace", {}),
             "acceptance_reasoning": _reasoning_for_signal(s),
         }
         for s in accepted
@@ -154,8 +212,12 @@ def run_deterministic_pipeline(
         "canonical_entities_extracted",
         "ontology_aware_retrieval",
         "signal_validation",
+        "epistemic_confidence_derivation",
+        "contradiction_consensus_analysis",
         "structured_signal_emission",
         "deterministic_synthesis" if accepted else "deterministic_rejection",
+        "governance_contract_emission",
+        "bucket_proof_ready",
     ]
     confidence_values = [float(s.get("confidence") or 0.0) for s in accepted]
     confidence_breakdown = {
@@ -165,7 +227,18 @@ def run_deterministic_pipeline(
         "accepted_derivations": [
             s.get("_validation", {}).get("confidence_derivation", {}) for s in accepted
         ],
+        "consensus": consensus,
     }
+    semantic_path = [
+        {
+            "signal_id": s.get("signal_id"),
+            "knowledge_id": s.get("trace", {}).get("knowledge_id"),
+            "domain": s.get("domain"),
+            "embedding_trace": s.get("trace", {}).get("embedding_trace", {}),
+            "source_lineage": s.get("trace", {}).get("source_lineage", {}),
+        }
+        for s in accepted
+    ]
 
     payload = {
         "trace_id": trace_id,
@@ -175,7 +248,9 @@ def run_deterministic_pipeline(
         "matched_signals": matched_signals,
         "rejected_signals": rejected,
         "reasoning_path": reasoning_path,
+        "semantic_path": semantic_path,
         "confidence_breakdown": confidence_breakdown,
+        "consensus_analysis": consensus,
         "knowledge_ids_used": [
             s.get("trace", {}).get("knowledge_id") for s in accepted if s.get("trace", {}).get("knowledge_id")
         ],
@@ -185,6 +260,18 @@ def run_deterministic_pipeline(
         "signals_found": len(accepted),
         "signals_rejected": len(rejected),
         "fallback_to_llm": False,
+        "output_contract": {
+            "schema": "TANTRA_UNIGURU_INTELLIGENCE_CONTRACT_V1",
+            "contract_bound": True,
+            "downstream_consumable": True,
+            "free_form_output": False,
+            "trace_id": trace_id,
+        },
+        "downstream_execution": {
+            "consumer": "TANTRA_EXECUTION_CHAIN",
+            "status": "READY_FOR_CONSUMPTION" if accepted else "REJECTED_NO_DOWNSTREAM_ACTION",
+            "trace_id": trace_id,
+        },
         "detected_domain": detected_domain,
         "reasoning": synthesis["reasoning"],
         "enforcement_stats": {
@@ -194,6 +281,7 @@ def run_deterministic_pipeline(
         },
         "generated_at": started_at,
     }
+    payload["bucket_proof"] = _bucket_contract(trace_id, payload)
     _write_proof_log(trace_id, payload)
     return payload
 

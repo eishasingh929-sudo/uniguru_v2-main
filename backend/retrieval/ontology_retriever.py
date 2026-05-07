@@ -21,23 +21,25 @@ class OntologyAwareRetriever:
             source=str(candidate.get("source") or ""),
             domain=str(candidate.get("domain") or ""),
         )
+        expanded_query = " ".join(sorted(self.resolver.expand_terms(query)))
+        expanded_candidate = " ".join(
+            sorted(
+                self.resolver.expand_terms(
+                    " ".join(
+                        [
+                            str(candidate.get("content") or ""),
+                            " ".join(candidate.get("tags") or []),
+                            str(candidate.get("source") or ""),
+                            str(candidate.get("domain") or ""),
+                        ]
+                    )
+                )
+            )
+        )
         query_vector, candidate_vector = self.embedding_provider.encode(
             [
-                " ".join(sorted(self.resolver.expand_terms(query))),
-                " ".join(
-                    sorted(
-                        self.resolver.expand_terms(
-                            " ".join(
-                                [
-                                    str(candidate.get("content") or ""),
-                                    " ".join(candidate.get("tags") or []),
-                                    str(candidate.get("source") or ""),
-                                    str(candidate.get("domain") or ""),
-                                ]
-                            )
-                        )
-                    )
-                ),
+                expanded_query,
+                expanded_candidate,
             ]
         )
         embedding_similarity = max(0.0, self.embedding_provider.similarity(query_vector, candidate_vector))
@@ -45,6 +47,15 @@ class OntologyAwareRetriever:
         return {
             **semantic,
             "embedding_similarity": round(embedding_similarity, 4),
+            "embedding_trace": {
+                "provider": self.embedding_provider.__class__.__name__,
+                "vector_source": "local_hash_expanded_canonical_terms",
+                "dimensions": getattr(self.embedding_provider, "dimensions", None),
+                "query_feature_count": len(expanded_query.split()),
+                "candidate_feature_count": len(expanded_candidate.split()),
+                "similarity_score": round(embedding_similarity, 4),
+                "retrieval_reasoning": "Offline deterministic semantic similarity over canonical term expansion.",
+            },
             "combined_score": combined,
         }
 

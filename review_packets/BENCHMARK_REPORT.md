@@ -21,6 +21,14 @@ NEW retrieval uses:
 - domain consistency
 - contextual proximity
 - local deterministic embedding similarity
+- source authority weighting
+- epistemic confidence ceilings
+
+Semantic graph artifact:
+
+- `backend/knowledge/index/semantic_memory_index.json`
+
+Hybrid retrieval now combines ontology score, local hash embedding similarity, and source governance. The benchmark artifact records old keyword score and new ontology score for each case.
 
 ## Required Failure Cases
 

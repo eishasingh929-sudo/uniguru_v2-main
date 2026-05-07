@@ -1,6 +1,8 @@
 import re
 import logging
 from typing import List, Dict, Any, Optional, Tuple
+from governance.epistemic_confidence import EpistemicConfidenceEngine
+from governance.source_governance import SourceGovernance
 from ontology.entity_resolver import CanonicalEntityResolver
 
 logger = logging.getLogger(__name__)
@@ -95,6 +97,7 @@ class SignalValidator:
             "candidate_entities": [],
             "missing_required_entities": [],
             "confidence_derivation": {},
+            "source_governance": {},
         }
 
         # Rule 1: Content must exist and be non-empty
@@ -114,6 +117,13 @@ class SignalValidator:
         # Rule 2: Confidence must meet minimum threshold
         if confidence < MIN_SIGNAL_CONFIDENCE:
             return False, f"confidence_below_threshold:{confidence:.3f}", details
+
+        source_governance = signal.get("source_governance")
+        if not isinstance(source_governance, dict):
+            source_governance = SourceGovernance.assess(signal)
+        details["source_governance"] = source_governance
+        if source_governance.get("suppression_reason"):
+            return False, str(source_governance["suppression_reason"]), details
 
         # Rule 3: Tag match — at least 1 tag must overlap with query
         tag_score, matched_tags = cls.compute_tag_match(query_tokens, tags)
@@ -147,6 +157,18 @@ class SignalValidator:
             if key in semantic:
                 details[key] = semantic[key]
 
+        match_confidence = round(
+            (0.25 * confidence)
+            + (0.25 * tag_score)
+            + (0.2 * content_overlap)
+            + (0.3 * float(details["semantic_score"])),
+            4,
+        )
+        epistemic = EpistemicConfidenceEngine.derive(
+            retrieval_confidence=confidence,
+            validation_details=details,
+            source_governance=source_governance,
+        )
         details["confidence_derivation"] = {
             "retrieval_confidence": round(confidence, 4),
             "tag_match_score": tag_score,
@@ -155,13 +177,9 @@ class SignalValidator:
             "entity_overlap": float(details["entity_overlap"]),
             "domain_consistency": float(details["domain_consistency"]),
             "formula": "0.25*retrieval + 0.25*tag + 0.2*content + 0.3*semantic",
-            "derived_confidence": round(
-                (0.25 * confidence)
-                + (0.25 * tag_score)
-                + (0.2 * content_overlap)
-                + (0.3 * float(details["semantic_score"])),
-                4,
-            ),
+            "match_confidence": match_confidence,
+            "epistemic_confidence": epistemic,
+            "derived_confidence": epistemic["score"],
         }
 
         # Accept if EITHER tag match OR content overlap is sufficient

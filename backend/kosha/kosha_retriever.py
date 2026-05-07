@@ -2,6 +2,7 @@ import re
 from typing import List, Dict, Any
 import hashlib
 from .kosha_validator import KoshaEntry
+from governance.source_governance import SourceGovernance
 from ontology.entity_resolver import CanonicalEntityResolver
 from retrieval.ontology_retriever import OntologyAwareRetriever
 
@@ -130,10 +131,17 @@ class KoshaRetriever:
                 "domain": entry.domain,
             }
             ontology_score = self.ontology_retriever.score(query, candidate)
+            source_governance = SourceGovernance.assess(candidate)
 
             # Domain agreement is part of the score, not a silent hard filter.
             domain_boost = 0.05 if domain and str(entry.domain).lower() == str(domain).lower() else 0.0
-            match_score = min(1.0, max(base_match_score, ontology_score["combined_score"]) + domain_boost)
+            source_weight = float(source_governance.get("authority_weight") or 0.0)
+            match_score = min(
+                1.0,
+                (0.72 * max(base_match_score, ontology_score["combined_score"]))
+                + (0.23 * source_weight)
+                + domain_boost,
+            )
 
             if match_score > 0 and str(entry.content).strip():
                 scored_entries.append((match_score, entry, ontology_score))
@@ -145,6 +153,14 @@ class KoshaRetriever:
         for rank, (match_score, entry, ontology_score) in enumerate(scored_entries):
             signal_id_hash = hashlib.md5(f"{entry.knowledge_id}_{entry.source}_{rank}".encode()).hexdigest()[:12]
             confidence = float(min(1.0, max(match_score, 0.0)))
+            source_governance = SourceGovernance.assess(
+                {
+                    "content": entry.content,
+                    "source": entry.source,
+                    "tags": entry.tags or [],
+                    "domain": entry.domain,
+                }
+            )
 
             signals.append(
                 {
@@ -156,10 +172,13 @@ class KoshaRetriever:
                     "tags": entry.tags or [],
                     "domain": entry.domain,
                     "ontology_score": ontology_score,
+                    "source_governance": source_governance,
                     "trace": {
                         "knowledge_id": entry.knowledge_id,
                         "method": "ontology_aware_kosha_retrieval",
                         "domain_resolution": domain_resolution,
+                        "embedding_trace": ontology_score.get("embedding_trace", {}),
+                        "source_lineage": source_governance.get("lineage", {}),
                     },
                 }
             )
