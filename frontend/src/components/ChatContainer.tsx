@@ -2929,6 +2929,7 @@ interface Message {
   timestamp?: Date;
   isLoading?: boolean;
   retrieved_chunks?: Array<{ index: number; file: string; score: number; content: string }>;
+  metadata?: Record<string, any>;
   vaani_audio?: {
     audio_url?: string;
     error?: string;
@@ -3062,7 +3063,8 @@ const ChatContainer: React.FC = () => {
                   score: chunk.score || 0,
                   content: chunk.content || ''
                 }))
-              : []
+              : [],
+            metadata: msg.metadata || undefined
           }));
           setMessages(formattedMessages);
           console.log(`Loaded ${formattedMessages.length} messages for chat ${currentChatId}`);
@@ -3158,6 +3160,7 @@ const ChatContainer: React.FC = () => {
                 content: chunk.content || ''
               }))
             : [],
+          metadata: response.aiResponse.metadata || undefined,
           vaani_audio: response.aiResponse.vaani_audio || null
         };
 
@@ -3660,6 +3663,81 @@ const ChatContainer: React.FC = () => {
     );
   };
 
+  const renderGovernancePanel = (metadata?: Record<string, any>) => {
+    if (!metadata?.trace_id) return null;
+    const confidence = Number(metadata.confidence_breakdown?.overall || 0);
+    const contradictions = metadata.consensus_analysis?.contradictions || [];
+    const acceptedCount = Array.isArray(metadata.matched_signals) ? metadata.matched_signals.length : 0;
+    const rejectedCount = Array.isArray(metadata.rejected_signals) ? metadata.rejected_signals.length : 0;
+    const lineage = metadata.retrieval_truth_payload?.source_lineage || [];
+    const memoryEvent = metadata.semantic_memory?.event || {};
+    const traversalPath = metadata.multi_hop_traversal?.paths?.[0] || [];
+    const downstreamStatus = metadata.downstream_execution?.status || "UNKNOWN";
+
+    return (
+      <div className="mt-3 w-full rounded-md border border-cyan-400/20 bg-slate-950/70 p-3 text-xs text-gray-200">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div>
+            <div className="text-gray-400">Confidence</div>
+            <div className={confidence >= 0.6 ? "text-emerald-300 font-semibold" : "text-amber-300 font-semibold"}>
+              {(confidence * 100).toFixed(1)}%
+            </div>
+          </div>
+          <div>
+            <div className="text-gray-400">Contradiction</div>
+            <div className={contradictions.length ? "text-red-300 font-semibold" : "text-emerald-300 font-semibold"}>
+              {contradictions.length ? `${contradictions.length} visible` : "none detected"}
+            </div>
+          </div>
+          <div>
+            <div className="text-gray-400">Signals</div>
+            <div className="font-semibold text-cyan-200">{acceptedCount} accepted / {rejectedCount} rejected</div>
+          </div>
+          <div>
+            <div className="text-gray-400">Downstream</div>
+            <div className="font-semibold text-cyan-200">{downstreamStatus}</div>
+          </div>
+        </div>
+        <div className="mt-2 border-t border-white/10 pt-2">
+          <div className="text-gray-400">Trace</div>
+          <div className="break-all font-mono text-cyan-200">{metadata.trace_id}</div>
+        </div>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          <div>
+            <div className="text-gray-400">Truth Boundary</div>
+            <div>retrieval: {metadata.retrieval_truth_payload?.artifact_hash?.slice(0, 12) || "missing"}</div>
+            <div>interpretation: {metadata.interpretation_payload?.artifact_hash?.slice(0, 12) || "missing"}</div>
+          </div>
+          <div>
+            <div className="text-gray-400">Memory</div>
+            <div>{memoryEvent.entities_touched?.length || 0} entities touched</div>
+            <div>{metadata.semantic_memory?.unresolved_threads?.length || 0} unresolved threads</div>
+          </div>
+        </div>
+        {lineage.length > 0 && (
+          <div className="mt-2">
+            <div className="text-gray-400">Source Lineage</div>
+            <div className="space-y-1">
+              {lineage.slice(0, 3).map((item: any, idx: number) => (
+                <div key={`${item.signal_id || idx}`} className="break-words">
+                  {item.signal_id} - {item.source || "unknown source"}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {traversalPath.length > 0 && (
+          <div className="mt-2">
+            <div className="text-gray-400">Semantic Traversal</div>
+            <div className="break-words text-cyan-100">
+              {traversalPath.map((hop: any) => hop.node).join(" -> ")}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div
       className="chat-container flex flex-col text-white transition-all duration-300 relative overflow-hidden"
@@ -3788,6 +3866,7 @@ const ChatContainer: React.FC = () => {
                 ) : (
                   <div className={msg.sender === "bot" ? "w-full" : ""}>
                     {msg.sender === "bot" ? renderFormattedBotText(msg.text) : msg.text}
+                    {msg.sender === "bot" && renderGovernancePanel(msg.metadata)}
                   </div>
                 )}
                 {msg.sender === "bot" && !msg.isLoading && (

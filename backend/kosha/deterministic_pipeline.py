@@ -19,6 +19,13 @@ from kosha.kosha_loader import KoshaLoader
 from kosha.kosha_retriever import KoshaRetriever
 from kosha.kosha_enforcer import KoshaEnforcer
 from kosha.signal_validator import SignalValidator, AnswerSynthesizer, NO_KNOWLEDGE_RESPONSE
+from kosha.semantic_boundary import (
+    build_interpretation_payload,
+    build_retrieval_truth_payload,
+    build_truth_interpretation_link,
+)
+from memory.semantic_memory import SemanticMemoryStore
+from reasoning.semantic_traversal import SemanticTraversalEngine
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +85,9 @@ def _bucket_contract(trace_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         },
         "accepted_signals": [signal.get("signal_id") for signal in payload.get("matched_signals", [])],
         "rejected_signals": [signal.get("signal_id") for signal in payload.get("rejected_signals", [])],
+        "retrieval_truth_hash": payload.get("retrieval_truth_payload", {}).get("artifact_hash"),
+        "interpretation_hash": payload.get("interpretation_payload", {}).get("artifact_hash"),
+        "memory_event": payload.get("semantic_memory", {}).get("event", {}),
         "confidence_derivation": payload.get("confidence_breakdown", {}),
         "semantic_path": payload.get("semantic_path", []),
         "verification_status": payload.get("verification_status"),
@@ -89,6 +99,7 @@ def run_deterministic_pipeline(
     query: str,
     domain_hint: Optional[str] = None,
     trace_id: Optional[str] = None,
+    user_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Full deterministic pipeline:
@@ -102,6 +113,7 @@ def run_deterministic_pipeline(
     """
     trace_id = trace_id or _new_trace_id(query)
     started_at = _utc_now_iso()
+    user_id = user_id or "anonymous"
 
     # Phase 1: Load Kosha entries
     loader = KoshaLoader(data_sources=[str(_KOSHA_DIR)])
@@ -117,10 +129,48 @@ def run_deterministic_pipeline(
     )
 
     if not valid_entries:
+        retrieval_truth = build_retrieval_truth_payload(
+            trace_id=trace_id,
+            query=query,
+            raw_signals=[],
+            accepted_signals=[],
+            rejected_signals=[],
+            domain_resolution={"domain": domain_hint or "general", "method": "no_valid_entries"},
+            generated_at=started_at,
+        )
+        interpretation_payload = build_interpretation_payload(
+            trace_id=trace_id,
+            synthesis={
+                "answer": NO_KNOWLEDGE_RESPONSE,
+                "verification_status": "NO_VERIFIED_KNOWLEDGE",
+                "confidence": 0.0,
+            },
+            confidence_breakdown={"overall": 0.0, "reason": "No valid Kosha entries passed schema enforcement."},
+            consensus=ContradictionConsensusEngine.analyze([]),
+            retrieval_truth=retrieval_truth,
+        )
+        memory_update = SemanticMemoryStore().update_from_pipeline(
+            trace_id=trace_id,
+            user_id=user_id,
+            query=query,
+            accepted_signals=[],
+            rejected_signals=[],
+            consensus=ContradictionConsensusEngine.analyze([]),
+            verification_status="NO_VERIFIED_KNOWLEDGE",
+        )
         payload = {
             "trace_id": trace_id,
             "query": query,
             "verification_status": "NO_VERIFIED_KNOWLEDGE",
+            "retrieval_truth_payload": retrieval_truth,
+            "interpretation_payload": interpretation_payload,
+            "truth_interpretation_link": build_truth_interpretation_link(
+                trace_id=trace_id,
+                retrieval_truth=retrieval_truth,
+                interpretation=interpretation_payload,
+            ),
+            "semantic_memory": memory_update,
+            "multi_hop_traversal": SemanticTraversalEngine().traverse(query=query),
             "matched_signals": [],
             "rejected_signals": [],
             "reasoning_path": ["load_kosha", "schema_enforcement_failed", "deterministic_rejection"],
@@ -239,12 +289,52 @@ def run_deterministic_pipeline(
         }
         for s in accepted
     ]
+    traversal_target = "Governance" if "governance" in query.lower() or "raj" in query.lower() else None
+    multi_hop_traversal = SemanticTraversalEngine().traverse(
+        query=query,
+        target=traversal_target,
+        max_hops=5,
+    )
+    retrieval_truth = build_retrieval_truth_payload(
+        trace_id=trace_id,
+        query=query,
+        raw_signals=raw_signals,
+        accepted_signals=matched_signals,
+        rejected_signals=rejected,
+        domain_resolution=domain_resolution,
+        generated_at=started_at,
+    )
+    interpretation_payload = build_interpretation_payload(
+        trace_id=trace_id,
+        synthesis=synthesis,
+        confidence_breakdown=confidence_breakdown,
+        consensus=consensus,
+        retrieval_truth=retrieval_truth,
+    )
+    semantic_memory = SemanticMemoryStore().update_from_pipeline(
+        trace_id=trace_id,
+        user_id=user_id,
+        query=query,
+        accepted_signals=accepted,
+        rejected_signals=rejected,
+        consensus=consensus,
+        verification_status=synthesis["verification_status"],
+    )
 
     payload = {
         "trace_id": trace_id,
         "query": query,
         "answer": synthesis["answer"],
         "verification_status": synthesis["verification_status"],
+        "retrieval_truth_payload": retrieval_truth,
+        "interpretation_payload": interpretation_payload,
+        "truth_interpretation_link": build_truth_interpretation_link(
+            trace_id=trace_id,
+            retrieval_truth=retrieval_truth,
+            interpretation=interpretation_payload,
+        ),
+        "semantic_memory": semantic_memory,
+        "multi_hop_traversal": multi_hop_traversal,
         "matched_signals": matched_signals,
         "rejected_signals": rejected,
         "reasoning_path": reasoning_path,

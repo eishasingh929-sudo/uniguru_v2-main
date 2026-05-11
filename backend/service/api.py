@@ -1346,21 +1346,41 @@ def chat_new(request_body: Dict[str, Any], raw_request: Request) -> Dict[str, An
         chat["messages"].append(user_msg)
         chat["lastActivity"] = _utc_now_iso()
 
-    # Reuse existing ask pipeline for AI response quality.
+    # Use the deterministic TANTRA-ready pipeline so the UI can expose truth state.
     try:
-        router_response = _process_router_request(
+        trace_id = f"chat_{chat_id}_{uuid.uuid5(uuid.NAMESPACE_URL, message).hex[:12]}"
+        router_response = _execute_kosha_pipeline(
             query=message,
-            context={"caller": "uniguru-frontend", "chat_id": chat_id, "chatbot_id": chatbot_id},
-            allow_web=False,
-            session_id=chat_id,
-            raw_request=raw_request,
+            domain_hint=None,
+            top_k=5,
+            trace_id=trace_id,
+            user_id=user_id,
         )
         answer = str(router_response.get("answer") or "I could not generate a response.")
     except Exception as exc:
         logger.exception("chat_new ask pipeline failed: %s", exc)
+        router_response = {}
         answer = "I am still learning this topic, please try again."
 
-    ai_msg = {"sender": "bot", "content": answer, "timestamp": _utc_now_iso()}
+    ai_metadata = {
+        "retrieved_chunks": [],
+        "trace_id": router_response.get("trace_id"),
+        "verification_status": router_response.get("verification_status"),
+        "confidence_breakdown": router_response.get("confidence_breakdown"),
+        "consensus_analysis": router_response.get("consensus_analysis"),
+        "retrieval_truth_payload": router_response.get("retrieval_truth_payload"),
+        "interpretation_payload": router_response.get("interpretation_payload"),
+        "truth_interpretation_link": router_response.get("truth_interpretation_link"),
+        "semantic_memory": router_response.get("semantic_memory"),
+        "multi_hop_traversal": router_response.get("multi_hop_traversal"),
+        "matched_signals": router_response.get("matched_signals", []),
+        "rejected_signals": router_response.get("rejected_signals", []),
+        "semantic_path": router_response.get("semantic_path", []),
+        "downstream_execution": router_response.get("downstream_execution"),
+        "bucket_proof": router_response.get("bucket_proof"),
+        "output_contract": router_response.get("output_contract"),
+    }
+    ai_msg = {"sender": "bot", "content": answer, "timestamp": _utc_now_iso(), "metadata": ai_metadata}
     with _CHAT_LOCK:
         chat["messages"].append(ai_msg)
         chat["lastActivity"] = _utc_now_iso()
@@ -1370,7 +1390,7 @@ def chat_new(request_body: Dict[str, Any], raw_request: Request) -> Dict[str, An
         "chat": serialized_chat,
         "aiResponse": {
             "content": answer,
-            "metadata": {"retrieved_chunks": []},
+            "metadata": ai_metadata,
             "vaani_audio": None,
         },
     }
@@ -1965,12 +1985,13 @@ def _execute_kosha_pipeline(
     top_k: int,
     allow_generated_verse: bool = False,
     trace_id: Optional[str] = None,
+    user_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     from kosha.deterministic_pipeline import run_deterministic_pipeline
 
     # TANTRA preparation boundary: this endpoint emits the schema-bound signal
     # contract only. It must not call FAISS or LLM synthesis before validation.
-    return run_deterministic_pipeline(query=query, domain_hint=domain_hint, trace_id=trace_id)
+    return run_deterministic_pipeline(query=query, domain_hint=domain_hint, trace_id=trace_id, user_id=user_id)
 
     from kosha.kosha_loader import KoshaLoader
     from kosha.kosha_retriever import KoshaRetriever
@@ -2286,6 +2307,11 @@ def new_query_endpoint(request: CoreRequest, token: HTTPAuthorizationCredentials
             top_k=5,
             allow_generated_verse=bool(request.allow_generated_verse),
             trace_id=request.request_id,
+            user_id=(
+                str(request.context.get("user_id") or request.context.get("caller") or "tantra-client")
+                if isinstance(request.context, dict)
+                else "tantra-client"
+            ),
         )
 
         log_to_bucket(
