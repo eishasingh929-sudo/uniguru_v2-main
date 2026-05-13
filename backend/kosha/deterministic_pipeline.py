@@ -149,6 +149,11 @@ def run_deterministic_pipeline(
             consensus=ContradictionConsensusEngine.analyze([]),
             retrieval_truth=retrieval_truth,
         )
+        truth_interpretation_link = build_truth_interpretation_link(
+            trace_id=trace_id,
+            retrieval_truth=retrieval_truth,
+            interpretation=interpretation_payload,
+        )
         memory_update = SemanticMemoryStore().update_from_pipeline(
             trace_id=trace_id,
             user_id=user_id,
@@ -157,6 +162,10 @@ def run_deterministic_pipeline(
             rejected_signals=[],
             consensus=ContradictionConsensusEngine.analyze([]),
             verification_status="NO_VERIFIED_KNOWLEDGE",
+            retrieval_truth_hash=retrieval_truth.get("artifact_hash"),
+            interpretation_hash=interpretation_payload.get("artifact_hash"),
+            truth_interpretation_link=truth_interpretation_link,
+            confidence=0.0,
         )
         payload = {
             "trace_id": trace_id,
@@ -164,11 +173,7 @@ def run_deterministic_pipeline(
             "verification_status": "NO_VERIFIED_KNOWLEDGE",
             "retrieval_truth_payload": retrieval_truth,
             "interpretation_payload": interpretation_payload,
-            "truth_interpretation_link": build_truth_interpretation_link(
-                trace_id=trace_id,
-                retrieval_truth=retrieval_truth,
-                interpretation=interpretation_payload,
-            ),
+            "truth_interpretation_link": truth_interpretation_link,
             "semantic_memory": memory_update,
             "multi_hop_traversal": SemanticTraversalEngine().traverse(query=query),
             "matched_signals": [],
@@ -311,6 +316,11 @@ def run_deterministic_pipeline(
         consensus=consensus,
         retrieval_truth=retrieval_truth,
     )
+    truth_interpretation_link = build_truth_interpretation_link(
+        trace_id=trace_id,
+        retrieval_truth=retrieval_truth,
+        interpretation=interpretation_payload,
+    )
     semantic_memory = SemanticMemoryStore().update_from_pipeline(
         trace_id=trace_id,
         user_id=user_id,
@@ -319,6 +329,11 @@ def run_deterministic_pipeline(
         rejected_signals=rejected,
         consensus=consensus,
         verification_status=synthesis["verification_status"],
+        retrieval_truth_hash=retrieval_truth.get("artifact_hash"),
+        interpretation_hash=interpretation_payload.get("artifact_hash"),
+        truth_interpretation_link=truth_interpretation_link,
+        confidence=float(synthesis.get("confidence") or confidence_breakdown.get("overall") or 0.0),
+        ontology_lineage=semantic_path,
     )
 
     payload = {
@@ -328,11 +343,7 @@ def run_deterministic_pipeline(
         "verification_status": synthesis["verification_status"],
         "retrieval_truth_payload": retrieval_truth,
         "interpretation_payload": interpretation_payload,
-        "truth_interpretation_link": build_truth_interpretation_link(
-            trace_id=trace_id,
-            retrieval_truth=retrieval_truth,
-            interpretation=interpretation_payload,
-        ),
+        "truth_interpretation_link": truth_interpretation_link,
         "semantic_memory": semantic_memory,
         "multi_hop_traversal": multi_hop_traversal,
         "matched_signals": matched_signals,

@@ -5,6 +5,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from memory.constitutional_semantic_memory import (
+    ConstitutionalSemanticMemory,
+    build_pipeline_memory_request,
+)
+
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_STATE_PATH = ROOT / "review_packets" / "proof_logs" / "semantic_memory_state.json"
@@ -57,7 +62,29 @@ class SemanticMemoryStore:
         rejected_signals: List[Dict[str, Any]],
         consensus: Dict[str, Any],
         verification_status: str,
+        retrieval_truth_hash: Optional[str] = None,
+        interpretation_hash: Optional[str] = None,
+        truth_interpretation_link: Optional[Dict[str, Any]] = None,
+        confidence: float = 0.0,
+        ontology_lineage: Optional[List[Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
+        constitutional_result = ConstitutionalSemanticMemory().record_pipeline_mutation(
+            build_pipeline_memory_request(
+                trace_id=trace_id,
+                user_id=user_id,
+                query=query,
+                accepted_signals=accepted_signals,
+                rejected_signals=rejected_signals,
+                consensus=consensus,
+                verification_status=verification_status,
+                retrieval_truth_hash=retrieval_truth_hash,
+                interpretation_hash=interpretation_hash,
+                truth_interpretation_link=truth_interpretation_link,
+                confidence=confidence,
+                ontology_lineage=ontology_lineage,
+            )
+        )
+
         state = self.load()
         now = _utc_now_iso()
         user_key = user_id or "anonymous"
@@ -129,6 +156,9 @@ class SemanticMemoryStore:
             "entities_touched": sorted(set(touched_entities)),
             "unresolved_thread_opened": unresolved_key in state.get("unresolved_threads", {}),
             "contradiction_pressure": contradiction_pressure,
+            "constitutional_event_hash": constitutional_result["event_hash"],
+            "memory_classification": constitutional_result["governance_decision"]["memory_classification"],
+            "canonical_authority_granted": constitutional_result["governance_decision"]["canonical_authority_granted"],
             "updated_at": now,
         }
         state.setdefault("events", []).append(event)
@@ -150,6 +180,8 @@ class SemanticMemoryStore:
                 for thread in state.get("unresolved_threads", {}).values()
                 if thread.get("trace_id") == trace_id
             ],
+            "constitutional_governance": constitutional_result,
             "observable": True,
             "replayable": True,
+            "canonical_authority_granted": constitutional_result["governance_decision"]["canonical_authority_granted"],
         }

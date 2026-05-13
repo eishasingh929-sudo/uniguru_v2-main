@@ -1,351 +1,313 @@
-# REVIEW_PACKET.md - TANTRA Convergence Sprint
+# REVIEW_PACKET.md - Constitutional Semantic Governance Sprint
 
-Generated for: UniGuru live deterministic convergence  
-Generated at: 2026-05-08  
-Status: Isha semantic truth boundary + persistent memory integration implemented
+Generated for: UniGuru governed semantic cognition layer  
+Generated at: 2026-05-13  
+Status: Constitutional semantic persistence implemented and proof-generated
 
-## Isha Sprint Addendum - 2026-05-08
+## 1. Entry Points
 
-This packet now covers the TANTRA convergence sprint requirements:
-
-- Retrieval truth and semantic interpretation are split into separate immutable artifacts.
-- Interpretation references retrieval evidence by hash and trace id only.
-- Persistent semantic memory is observable in `review_packets/proof_logs/semantic_memory_state.json`.
-- Multi-hop ontology traversal is deterministic and trace-visible.
-- Chat UI exposes confidence, contradiction state, accepted/rejected signal counts, source lineage, trace id, memory state, truth/interpretation hashes, and downstream readiness.
-- One-command proof regeneration is available through `python scripts/run_tantra_convergence_proof.py`.
-
-## Entry Points
-
-- `backend/kosha/deterministic_pipeline.py`
-  - Primary TANTRA intelligence contract boundary.
-  - Emits `trace_id`, accepted/rejected signals, semantic path, epistemic confidence, consensus analysis, output contract, downstream execution status, and Bucket-ready proof.
-- `backend/kosha/semantic_boundary.py`
-  - Builds immutable `retrieval_truth_payload`, bounded `interpretation_payload`, and hash-based `truth_interpretation_link`.
+- `backend/memory/constitutional_semantic_memory.py`
+  - New constitutional semantic governance layer.
+  - Provides deterministic mutation acceptance, append-only events, replay reconstruction, rollback preview, hash-chain validation, contradiction audit, and observability output.
 - `backend/memory/semantic_memory.py`
-  - File-backed semantic continuity state with user continuity, entity reinforcement, unresolved threads, contradiction pressure, decay state, and replay-visible update events.
-- `backend/reasoning/semantic_traversal.py`
-  - Deterministic multi-hop traversal over canonical seed entities and concept edges.
-- `scripts/run_tantra_convergence_proof.py`
-  - Regenerates replay, contradiction, memory continuity, traversal, downstream contract, and Bucket proof artifacts in `review_packets/proof_logs/`.
-- `backend/kosha/kosha_retriever.py`
-  - Ontology-aware retrieval with source governance and local deterministic embedding trace.
-- `backend/kosha/signal_validator.py`
-  - Deterministic validation boundary with epistemic confidence derivation.
-- `backend/governance/source_governance.py`
-  - Canonical source hierarchy, authority weight, OCR integrity penalty, confidence ceilings, and source lineage.
-- `backend/governance/epistemic_confidence.py`
-  - Truth-likelihood scoring separate from match strength.
-- `backend/governance/contradiction.py`
-  - Deterministic contradiction, ambiguity, and consensus analysis.
-- `backend/retrieval/embedding_provider.py`
-  - Offline provider-independent `LocalHashEmbeddingProvider`.
-- `backend/retrieval/ontology_retriever.py`
-  - Emits ontology score plus embedding trace proof.
-- `backend/loaders/ingestor.py`
-  - Builds legacy keyword index and `semantic_memory_index.json`.
-- `scripts/ingest_kb.py`
-  - Regenerates `backend/knowledge/index/*` artifacts.
-
-## Semantic Execution Flow
-
-`Input -> Kosha load -> schema enforcement -> canonical entity extraction -> ontology retrieval -> source governance -> deterministic validation -> epistemic confidence -> contradiction/consensus -> contract emission -> downstream-ready execution status -> Bucket proof`
-
-No free-form fallback is emitted from this path. If no signal passes validation, the system emits `NO_VERIFIED_KNOWLEDGE`, `REJECTED_NO_SYNTHESIS`, and `REJECTED_NO_DOWNSTREAM_ACTION`.
-
-## Trace Contract
-
-Every proof payload carries a single immutable trace:
-
-- `trace_id`
-- `matched_signals[*].trace.trace_id`
-- `output_contract.trace_id`
-- `downstream_execution.trace_id`
-- `bucket_proof.trace_id`
-- `bucket_proof.trace_continuity.retrieval`
-- `bucket_proof.trace_continuity.validation`
-- `bucket_proof.trace_continuity.synthesis`
-- `bucket_proof.trace_continuity.contract_emission`
-- `bucket_proof.trace_continuity.downstream_execution`
-- `bucket_proof.trace_continuity.bucket_proof`
-
-Trace mutation is therefore machine-detectable by comparing these fields.
-
-## Retrieval Truth vs Interpretation Boundary
-
-Every deterministic payload now includes:
-
-- `retrieval_truth_payload`
-  - `layer: DETERMINISTIC_RETRIEVAL_TRUTH`
-  - immutable accepted/rejected signal ids
-  - immutable source lineage
-  - raw signal count
-  - domain resolution
-  - `artifact_hash`
-- `interpretation_payload`
-  - `layer: BOUNDED_SEMANTIC_INTERPRETATION`
-  - answer, verification status, confidence, contradiction state
-  - references to `retrieval_truth_hash` and accepted signal ids
-  - authority boundary flags showing no retrieval mutation and no unreferenced claims
-- `truth_interpretation_link`
-  - retrieval hash
-  - interpretation hash
-  - `boundary_status: ENFORCED`
-  - machine-checkable reference match
-
-Runtime timestamps remain visible, but stable artifact hashes ignore runtime timestamp fields so deterministic replay can prove evidence identity.
-
-## Governance-Safe Contract
-
-The response is schema-bound JSON with:
-
-- `output_contract.schema: TANTRA_UNIGURU_INTELLIGENCE_CONTRACT_V1`
-- `contract_bound: true`
-- `downstream_consumable: true`
-- `free_form_output: false`
-- `fallback_to_llm: false`
-- `matched_signals`
-- `rejected_signals`
-- `semantic_path`
-- `confidence_breakdown`
-- `consensus_analysis`
-- `bucket_proof`
-
-## Confidence Derivation
-
-Confidence is now epistemic, not just retrieval strength. Dimensions:
+  - Existing pipeline facade now routes every memory update through `ConstitutionalSemanticMemory`.
+  - Legacy continuity state remains observable, but canonical authority comes only from governance decisions.
+- `backend/kosha/deterministic_pipeline.py`
+  - Passes retrieval truth hash, interpretation hash, truth/interpretation link, confidence, and ontology lineage into memory governance.
+- `scripts/run_constitutional_semantic_proof.py`
+  - Regenerates replay proof logs, semantic mutation traces, contradiction injection example, rollback demonstration, lineage reconstruction, poisoning example, corruption fixture, and observability output.
+- `backend/tests/test_constitutional_semantic_memory.py`
+  - Vinayak testing surface for replay, contradiction, ontology mutation, rollback, corruption, poisoning, observability, and lineage continuity.
+- `docs/architecture/CONSTITUTIONAL_SEMANTIC_GOVERNANCE.md`
+  - Architecture documentation for the governed semantic persistence layer.
 
-- source authority
-- semantic agreement
-- contradiction pressure
-- contextual consistency
-- ontology convergence
-- OCR integrity
-- multi-source reinforcement
-- retrieval strength
+## 2. Semantic Governance Flow
 
-Confidence ceilings prevent weak OCR or weak semantic convergence from producing high confidence. Example verified trace: `trace_f3c8162c107a5e10` has match confidence `0.7711`, but epistemic confidence is capped to `0.5972` because the source is an OCR derivative.
+Flow:
 
-## Source Governance
+`Kosha retrieval -> immutable retrieval truth payload -> bounded interpretation payload -> truth/interpretation link -> SemanticMemoryStore -> ConstitutionalSemanticMemory -> governance decision -> append-only event -> deterministic reconstruction -> checkpoint + telemetry`
 
-Source hierarchy:
+Governance decision schema:
 
-- canonical scripture
-- commentary
-- translation
-- OCR derivative
-- inferred synthesis
-- unknown
+- `ACCEPT_CANONICAL_MUTATION`
+- `REJECT_CANONICAL_MUTATION`
+- `memory_classification: canonical | transient | quarantined`
+- `canonical_authority_granted: true | false`
+- `reasons`
+- `failure_states`
+- `rules`
 
-Each signal includes:
+Canonical authority is granted only after the governance gate validates trace continuity, retrieval hash, interpretation hash, enforced truth boundary, verification status, confidence floor, accepted signals, and contradiction absence.
 
-- `source_governance.source_type`
-- `authority_weight`
-- `confidence_ceiling`
-- `ocr_integrity_penalty`
-- `lineage.original_source`
-- `lineage.transformation_history`
+## 3. Memory Lifecycle Architecture
 
-Weak source suppression prevents very low-authority signals from dominating retrieval.
+Memory states are separated:
 
-## Contradiction And Consensus
+- Transient memory
+  - Rejected, low-confidence, no-signal, boundary-failed, or unverified observations.
+  - Persisted as observable events but never treated as canonical truth.
+- Canonical memory
+  - Reconstructed only from events accepted by constitutional governance.
+  - Entity state includes lineage event hashes, source signal ids, trace ids, and max accepted confidence.
+- Quarantined memory
+  - Contradictory observations.
+  - Preserved in contradiction audit views and excluded from canonical reconstruction.
 
-`consensus_analysis` includes:
+The system no longer lets the runtime interpretation layer write directly into canonical memory.
 
-- contradiction list
-- ambiguity classification
-- consensus score
-- contradiction pressure
-- source count
-- disagreement-aware synthesis note
+## 4. Replay Reconstruction Flow
 
-Contradictory or interpretive cases reduce epistemic confidence instead of being flattened into certainty.
+Replay reads `review_packets/proof_logs/constitutional_semantic_events.jsonl` in append order and validates:
 
-## Semantic Memory
+- each event hash
+- previous-event hash chain
+- memory classification
+- canonical reconstruction
+- contradiction audit entries
+- lineage continuity
 
-`backend/knowledge/index/semantic_memory_index.json` contains:
+Output:
+
+- `review_packets/proof_logs/constitutional_semantic_checkpoint.json`
+- `review_packets/proof_logs/constitutional_lineage_reconstruction.json`
+
+Latest proof summary:
+
+```json
+{
+  "all_deterministic_replay_outputs_stable": true,
+  "lineage_continuity_validation": true,
+  "hash_chain_ok": true
+}
+```
+
+## 5. Contradiction Handling Flow
 
-- entities
-- relationships
-- semantic edges
-- hierarchical concept chains
-- source lineage
+Contradiction handling is deterministic:
 
-This preserves compatibility with the old keyword index while adding graph-grounded memory artifacts for downstream convergence.
+`contradiction detected -> governance reason contradiction_requires_audit -> memory_classification quarantined -> canonical_authority_granted false -> contradiction_audit entry emitted`
 
-The new persistent runtime memory proof is:
+Proof file:
+
+- `review_packets/proof_logs/constitutional_semantic_proof.json`
+
+Contradiction injection result:
+
+```json
+{
+  "trace_id": "constitutional_contradiction_injection",
+  "memory_classification": "quarantined",
+  "canonical_authority_granted": false,
+  "contradiction_pressure": 1.0
+}
+```
 
-- `review_packets/proof_logs/semantic_memory_state.json`
-
-It includes:
-
-- user continuity state
-- semantic entity continuity
-- unresolved thread tracking
-- trace-linked memory update events
-- contradiction pressure
-- reinforcement score
-- memory decay state
-
-This is observable memory, not hidden chat memory.
-
-## Multi-Hop Traversal Proof
-
-`review_packets/proof_logs/memory_continuity_trace.json` demonstrates deterministic traversal:
-
-`Bhagavad Gita -> Dharma -> Rajadharma -> Governance`
-
-The traversal payload includes node names, relationship types, max hop count, source seed file, and deterministic execution flag.
-
-## Proof Logs
-
-Proof directory:
-
-- `review_packets/proof_logs/`
-
-Current Isha proof files:
-
-- `tantra_convergence_summary.json`
-- `replay_trace.json`
-- `contradiction_trace.json`
-- `memory_continuity_trace.json`
-- `downstream_contract_trace.json`
-- `semantic_memory_state.json`
-
-Legacy/generated files:
-
-- `proof_log_summary.json`
-- `retrieval_benchmark.json`
-- 15 latest per-trace proof files listed in `proof_log_summary.json`
-
-Proof run summary:
-
-- Total queries: 15
-- Verified knowledge responses: 3
-- Deterministic rejections: 12
-- Trace continuity: Bucket proof and downstream execution share the same trace id.
-
-Representative traces:
-
-- Verified + Bucket proof: `trace_f3c8162c107a5e10`
-- Consensus case: `trace_2fbb372950f250a1`
-- Cross-domain rejection: `trace_b3b508fcdf505233`
-- Current-events rejection: `trace_2b915a620b915df7`
-
-Isha representative traces:
-
-- Replay-stable deterministic rejection: `tantra_replay_qubit`
-- Governance contradiction/rejection visibility: `tantra_contradiction_governance`
-- Memory and traversal continuity: `tantra_memory_gita_governance`
-- Verified downstream-ready contract: `tantra_downstream_vishnu`
-
-Latest replay summary:
-
-- `all_replay_hashes_stable: true`
-- Verified downstream status: `READY_FOR_CONSUMPTION`
-- Rejected cases stay `REJECTED_NO_DOWNSTREAM_ACTION`
-
-## Benchmark Report
-
-Benchmark file:
-
-- `review_packets/proof_logs/retrieval_benchmark.json`
-
-Metrics from final run:
-
-- Precision: `1.0`
-- Rejection correctness: `1.0`
-- Semantic accuracy: `1.0`
-
-Compared behavior:
-
-- OLD: keyword overlap only.
-- Ontology retrieval: canonical entity extraction, synonym expansion, concept overlap, entity overlap, domain consistency, contextual proximity.
-- Semantic graph retrieval: `semantic_memory_index.json` preserves entity, relationship, edge, hierarchy, and lineage artifacts.
-- Hybrid retrieval: ontology score plus local hash embedding score plus source authority weighting.
-
-## TANTRA End-To-End Proof
-
-Required flow demonstrated by `trace_f3c8162c107a5e10`:
-
-`Input -> UniGuru semantic retrieval -> deterministic validation -> epistemic confidence -> contract emission -> downstream consumption status -> Bucket proof -> immutable trace continuity`
-
-Downstream field:
-
-- `downstream_execution.consumer: TANTRA_EXECUTION_CHAIN`
-- `downstream_execution.status: READY_FOR_CONSUMPTION`
-- `bucket_proof.event: tantra_uniguru_intelligence_contract`
-
-Isha proof flow is regenerated by:
-
-`python scripts/run_tantra_convergence_proof.py`
-
-It demonstrates:
-
-`Signal -> Retrieval Truth -> Bounded Interpretation -> Semantic Memory -> Contract -> Downstream-ready artifact -> Bucket proof`
-
-Verified downstream sample:
-
-- `review_packets/proof_logs/downstream_contract_trace.json`
-- `output_contract.schema: TANTRA_UNIGURU_INTELLIGENCE_CONTRACT_V1`
-- `downstream_execution.status: READY_FOR_CONSUMPTION`
-- `bucket_proof.trace_continuity.*: tantra_downstream_vishnu`
-
-## UI Governance Surface
-
-`frontend/src/components/ChatContainer.tsx` now renders a governance panel for deterministic chat responses:
-
-- confidence percentage
-- contradiction count
-- accepted/rejected signal counts
-- downstream execution readiness
-- trace id
-- retrieval truth hash
-- interpretation hash
-- memory entities and unresolved threads
-- source lineage
-- semantic traversal path
-
-The UI intentionally does not flatten uncertainty or hide rejected signals.
-
-## Deployment Reproducibility
-
-Commands verified:
-
-- `python -m compileall backend\kosha backend\memory backend\reasoning scripts\run_tantra_convergence_proof.py`
-- `python scripts\run_tantra_convergence_proof.py`
-- `npm.cmd run build`
-
-Notes:
-
-- `npm run build` through PowerShell `npm.ps1` was blocked by local execution policy.
-- `npm.cmd run build` succeeded and is the Windows-safe one-command frontend build path.
-- Vite reports only bundle-size and Browserslist freshness warnings; no TypeScript build failure.
-
-## Video Walkthrough Notes
-
-Recommended 10-15 minute walkthrough:
-
-1. Show `backend/kosha/deterministic_pipeline.py` and the TANTRA contract payload.
-2. Show `backend/governance/source_governance.py`, `epistemic_confidence.py`, and `contradiction.py`.
-3. Show `backend/retrieval/ontology_retriever.py` embedding trace emission.
-4. Open `backend/knowledge/index/semantic_memory_index.json`.
-5. Open `review_packets/proof_logs/trace_f3c8162c107a5e10.json`.
-6. Open `proof_log_summary.json` and `retrieval_benchmark.json`.
-7. Explain rejection cases and confidence ceilings.
-
-## Handover Notes
-
-Current limitations:
-
-- Kosha data still contains OCR artifacts and thin entries; stricter confidence ceilings intentionally reduce certainty.
-- Legacy unreachable helper code remains below `_execute_kosha_pipeline()` in `backend/service/api.py`; endpoint execution returns before that code.
-- Source hierarchy is deterministic but should be reviewed by Soham before being treated as final ontology governance.
-- Bucket proof is file-backed and Bucket-ready; live external Bucket transport remains an infrastructure task.
-
-Integration dependencies:
-
-- Vijay: confirm exact downstream TANTRA contract fields.
-- Soham: review entity taxonomy, Sanskrit mappings, and source hierarchy.
-- Alay: pin `python backend/run_proof_log.py`, `python backend/run_retrieval_benchmark.py`, and `python scripts/ingest_kb.py` in CI.
-- Vinayak: run final deterministic trace verification against `review_packets/proof_logs/`.
+## 6. Mutation Governance Rules
+
+Canonical mutation requires all of:
+
+- trace id exists
+- retrieval truth hash exists
+- interpretation hash exists
+- truth/interpretation boundary status is `ENFORCED`
+- interpretation references retrieval truth
+- verification status is `VERIFIED`
+- at least one accepted signal exists
+- confidence is at least `0.55`
+- contradiction pressure is `0.0`
+- contradiction list is empty
+
+Governance rules emitted in every decision:
+
+- `interpretation_never_mutates_retrieval_truth`
+- `canonical_authority_requires_governance_acceptance`
+- `contradictions_are_audit_events_not_silent_merges`
+- `persistent_writes_are_append_only_and_replayable`
+- `ontology_references_preserve_snapshot_lineage`
+
+## 7. Failure States
+
+Covered failure states:
+
+- contradictory memory injection
+- invalid ontology mutation without version bump
+- replay corruption
+- missing retrieval truth hash
+- bypassed truth/interpretation boundary
+- memory poisoning attempt
+- low-confidence canonical promotion attempt
+- unverified semantic persistence attempt
+- rollback target reconstruction
+
+Corruption proof:
+
+```json
+{
+  "corruption_tested": true,
+  "hash_chain_ok": false,
+  "expected_detection": true
+}
+```
+
+## 8. Replay Proof Logs
+
+Proof files generated:
+
+- `review_packets/proof_logs/constitutional_semantic_proof.json`
+- `review_packets/proof_logs/constitutional_semantic_events.jsonl`
+- `review_packets/proof_logs/constitutional_semantic_checkpoint.json`
+- `review_packets/proof_logs/constitutional_semantic_observability.json`
+- `review_packets/proof_logs/constitutional_lineage_reconstruction.json`
+- `review_packets/proof_logs/constitutional_replay_qubit.json`
+- `review_packets/proof_logs/constitutional_lineage_vishnu.json`
+- `review_packets/proof_logs/constitutional_transient_governance.json`
+- `review_packets/proof_logs/constitutional_corruption_fixture.jsonl`
+
+Replay checks:
+
+```json
+{
+  "retrieval_truth_hash_stable": true,
+  "interpretation_hash_stable": true,
+  "semantic_mutation_id_stable": true,
+  "semantic_event_hash_stable": true,
+  "idempotent_replay_observed": true
+}
+```
+
+## 9. Observability Outputs
+
+Telemetry file:
+
+- `review_packets/proof_logs/constitutional_semantic_observability.json`
+
+Latest telemetry:
+
+```json
+{
+  "schema": "UNIGURU_CONSTITUTIONAL_SEMANTIC_OBSERVABILITY_V1",
+  "event_count": 5,
+  "canonical_entity_count": 4,
+  "transient_event_count": 4,
+  "contradiction_event_count": 1,
+  "hash_chain_ok": true
+}
+```
+
+The observability output is intentionally machine-readable and can be surfaced later in a UI dashboard without adding hidden mutation pathways.
+
+## 10. What Changed / Not Touched
+
+Changed:
+
+- Added constitutional semantic governance event store.
+- Added deterministic semantic mutation acceptance rules.
+- Added replay-safe semantic reconstruction and rollback preview.
+- Added append-only lineage event log and checkpoint.
+- Added semantic observability telemetry.
+- Routed existing memory persistence through governance.
+- Added proof generator for mandatory constitutional examples.
+- Added focused tests for replay, contradiction, ontology mutation, rollback, corruption, poisoning, and lineage continuity.
+- Added architecture documentation.
+
+Not touched:
+
+- No LLM fallback was added.
+- Retrieval truth payload structure remains immutable.
+- Bounded interpretation payload remains separate from retrieval truth.
+- Ontology snapshot files were not rewritten.
+- Frontend UI was not expanded in this sprint.
+- Existing Kosha retrieval semantics were not refactored.
+
+## 11. Real JSON Execution Samples
+
+Canonical accepted sample:
+
+```json
+{
+  "trace_id": "constitutional_lineage_vishnu",
+  "memory_classification": "canonical",
+  "canonical_authority_granted": true,
+  "confidence": 0.5972
+}
+```
+
+Transient rejected sample:
+
+```json
+{
+  "trace_id": "constitutional_replay_qubit",
+  "memory_classification": "transient",
+  "canonical_authority_granted": false,
+  "reasons": [
+    "verification_status_not_verified",
+    "no_accepted_signals",
+    "confidence_below_canonical_floor"
+  ]
+}
+```
+
+Poisoning rejection sample:
+
+```json
+{
+  "trace_id": "constitutional_poisoning_attempt",
+  "memory_classification": "transient",
+  "canonical_authority_granted": false,
+  "reasons": [
+    "missing_retrieval_truth_hash",
+    "truth_interpretation_boundary_not_enforced",
+    "interpretation_does_not_reference_retrieval_truth"
+  ]
+}
+```
+
+Rollback demonstration:
+
+```json
+{
+  "rollback_event_count": 1,
+  "rollback_hash_chain_ok": true,
+  "target_event_hash": "ee885e7b53760604fa12610a511526ccd8098b5ee3451eda8022e6b1cf1d131f"
+}
+```
+
+## 12. Known Risks
+
+- The event store is file-backed JSONL; concurrent writers need a lock or transactional database before high-concurrency production use.
+- Governance confidence floor is fixed at `0.55`; future calibration should be domain-reviewed.
+- Partial rejection presence is visible as a failure state but does not automatically block canonical acceptance when all canonical rules pass.
+- Observability is currently JSON telemetry, not a full dashboard.
+- Legacy `semantic_memory_state.json` remains for continuity compatibility and can accumulate duplicate legacy events even when constitutional mutation is idempotent.
+
+## 13. Future Architectural Risks
+
+- Cross-system semantic federation must not merge external canonical states without preserving source event lineage.
+- Ontology registry evolution needs a dedicated constitutional versioning flow before mutable ontology writes are allowed.
+- Long-range reconstruction from partial nodes will need signed event batches or Merkle segment proofs.
+- Retrieval prioritization must avoid treating reinforcement frequency as truth authority.
+- Governance dashboards should remain read-only unless backed by explicit mutation commands and audit events.
+
+## Vinayak Testing Proof
+
+Commands run:
+
+```powershell
+python -m compileall backend\memory backend\kosha scripts\run_constitutional_semantic_proof.py
+python -m pytest backend\tests\test_constitutional_semantic_memory.py --basetemp .pytest_tmp
+python scripts\run_constitutional_semantic_proof.py
+```
+
+Results:
+
+- Compile: passed
+- Focused tests: `5 passed`
+- Proof generation: passed
+- Replay reconstruction: passed
+- Contradiction injection: passed
+- Ontology mutation test: passed
+- Rollback validation: passed
+- Semantic corruption detection: passed
+- Memory poisoning rejection: passed
+- Observability verification: passed
+- Lineage continuity validation: passed
