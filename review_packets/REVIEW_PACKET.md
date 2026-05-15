@@ -1,313 +1,268 @@
-# REVIEW_PACKET.md - Constitutional Semantic Governance Sprint
+# REVIEW_PACKET.md - Semantic Drift Governance and Authority-Bound Cognition Sprint
 
-Generated for: UniGuru governed semantic cognition layer  
-Generated at: 2026-05-13  
-Status: Constitutional semantic persistence implemented and proof-generated
+Generated at: 2026-05-15  
+Status: Implemented and proof-generated  
+Scope: Semantic drift observability, contradiction escalation governance, trust-bound semantic weighting, authority-gravity diagnostics, uncertainty lineage.
 
-## 1. Entry Points
+## 1. Entry points
 
-- `backend/memory/constitutional_semantic_memory.py`
-  - New constitutional semantic governance layer.
-  - Provides deterministic mutation acceptance, append-only events, replay reconstruction, rollback preview, hash-chain validation, contradiction audit, and observability output.
-- `backend/memory/semantic_memory.py`
-  - Existing pipeline facade now routes every memory update through `ConstitutionalSemanticMemory`.
-  - Legacy continuity state remains observable, but canonical authority comes only from governance decisions.
-- `backend/kosha/deterministic_pipeline.py`
-  - Passes retrieval truth hash, interpretation hash, truth/interpretation link, confidence, and ontology lineage into memory governance.
-- `scripts/run_constitutional_semantic_proof.py`
-  - Regenerates replay proof logs, semantic mutation traces, contradiction injection example, rollback demonstration, lineage reconstruction, poisoning example, corruption fixture, and observability output.
-- `backend/tests/test_constitutional_semantic_memory.py`
-  - Vinayak testing surface for replay, contradiction, ontology mutation, rollback, corruption, poisoning, observability, and lineage continuity.
-- `docs/architecture/CONSTITUTIONAL_SEMANTIC_GOVERNANCE.md`
-  - Architecture documentation for the governed semantic persistence layer.
+- `backend/governance/semantic_authority.py`
+  - `SemanticDriftObservabilityEngine.observe(...)`
+  - `ContradictionEscalationGovernance.evaluate(...)`
+  - `TrustBoundSemanticWeightingFramework.score(...)`
+  - `AuthorityGravityDiagnostics.evaluate(...)`
+  - `UncertaintyLineageTracker.reconstruct(...)`
+- `scripts/run_semantic_authority_governance_proof.py`
+  - Generates machine-readable proof files under `review_packets/proof_logs/`.
+- `backend/tests/test_semantic_authority_governance.py`
+  - Covers drift, contradiction escalation, persistent unresolved contradiction, confidence inflation, reinforcement abuse, and replay-safe uncertainty lineage.
 
-## 2. Semantic Governance Flow
+## 2. Semantic drift architecture
 
-Flow:
+Input:
 
-`Kosha retrieval -> immutable retrieval truth payload -> bounded interpretation payload -> truth/interpretation link -> SemanticMemoryStore -> ConstitutionalSemanticMemory -> governance decision -> append-only event -> deterministic reconstruction -> checkpoint + telemetry`
+`previous ontology snapshot + current ontology snapshot + semantic event list`
 
-Governance decision schema:
+Deterministic flow:
 
-- `ACCEPT_CANONICAL_MUTATION`
-- `REJECT_CANONICAL_MUTATION`
-- `memory_classification: canonical | transient | quarantined`
-- `canonical_authority_granted: true | false`
-- `reasons`
-- `failure_states`
-- `rules`
+`detect_semantic_drift -> ontology mutation lineage -> confidence pressure -> reinforcement pressure -> semantic continuity pressure -> authority-gravity diagnostic -> telemetry hash`
 
-Canonical authority is granted only after the governance gate validates trace continuity, retrieval hash, interpretation hash, enforced truth boundary, verification status, confidence floor, accepted signals, and contradiction absence.
+The drift engine returns `observable_only: true` and `canonical_authority_granted: false`. It detects pressure and produces telemetry. It does not mutate ontology, canonical memory, source ranking, or confidence state.
 
-## 3. Memory Lifecycle Architecture
+## 3. Contradiction governance lifecycle
 
-Memory states are separated:
+Lifecycle states:
 
-- Transient memory
-  - Rejected, low-confidence, no-signal, boundary-failed, or unverified observations.
-  - Persisted as observable events but never treated as canonical truth.
-- Canonical memory
-  - Reconstructed only from events accepted by constitutional governance.
-  - Entity state includes lineage event hashes, source signal ids, trace ids, and max accepted confidence.
-- Quarantined memory
-  - Contradictory observations.
-  - Preserved in contradiction audit views and excluded from canonical reconstruction.
+- `NO_CONTRADICTION`: no contradiction present; no canonical authority is granted by this layer.
+- `OBSERVED`: contradiction present but quorum is not met; persist unresolved audit.
+- `ESCALATED`: contradiction present and quorum is met; quarantine and require review.
+- `PERSISTENT_UNRESOLVED`: contradiction recurs with prior unresolved count; quarantine and escalate review.
 
-The system no longer lets the runtime interpretation layer write directly into canonical memory.
+Rules:
 
-## 4. Replay Reconstruction Flow
+- Contradictions are never silently merged.
+- Contradiction lineage includes signal ids, polarities, quorum state, prior unresolved count, lifecycle state, and audit hash.
+- `canonical_authority_granted` is `false` for contradiction states.
 
-Replay reads `review_packets/proof_logs/constitutional_semantic_events.jsonl` in append order and validates:
+## 4. Trust-weighting flow
 
-- each event hash
-- previous-event hash chain
-- memory classification
-- canonical reconstruction
-- contradiction audit entries
-- lineage continuity
+Input:
+
+`confidence + prior_confidence + provenance_weight + legitimacy_evidence + reinforcement_count + contradiction_pressure + uncertainty`
 
 Output:
 
-- `review_packets/proof_logs/constitutional_semantic_checkpoint.json`
-- `review_packets/proof_logs/constitutional_lineage_reconstruction.json`
+- `confidence`: truth-likelihood signal supplied to the framework.
+- `legitimacy_ceiling`: deterministic cap derived from provenance and legitimacy evidence, reduced by contradiction and uncertainty.
+- `trust_score`: `min(confidence, legitimacy_ceiling)`.
+- `confidence_inflation_detected`: true when confidence rises faster than legitimacy permits.
+- `reinforcement_abuse_detected`: true when repetition pressure is high but legitimacy evidence is weak.
+- `boundary_decision`: `REJECT_LEGITIMACY_ESCALATION` or `OBSERVE_WITH_BOUNDED_TRUST`.
 
-Latest proof summary:
+This framework separates confidence from legitimacy and reinforcement from truth authority.
+
+## 5. Semantic observability outputs
+
+Generated proof files:
+
+- `review_packets/proof_logs/semantic_authority_governance_proof.json`
+- `review_packets/proof_logs/semantic_drift_telemetry.json`
+- `review_packets/proof_logs/contradiction_replay_audit.json`
+- `review_packets/proof_logs/trust_bound_weighting.json`
+- `review_packets/proof_logs/uncertainty_lineage_reconstruction.json`
+
+Telemetry fields:
+
+- `ontology_drift`
+- `ontology_mutation_lineage`
+- `confidence_pressure`
+- `reinforcement_pressure`
+- `semantic_continuity_pressure`
+- `authority_gravity`
+- `telemetry_hash`
+
+## 6. Authority-gravity diagnostics
+
+Formula:
+
+`0.28*confidence_pressure + 0.28*reinforcement_pressure + 0.20*continuity_pressure + 0.14*contradiction_pressure + 0.10*ontology_violation_pressure`
+
+Threshold:
+
+- `authority_gravity_detected = true` when score is at least `0.55`.
+
+Proof output:
 
 ```json
 {
-  "all_deterministic_replay_outputs_stable": true,
-  "lineage_continuity_validation": true,
-  "hash_chain_ok": true
+  "authority_gravity_detected": true,
+  "governance_response": "ESCALATE_OBSERVABILITY",
+  "score": 0.8353
 }
 ```
 
-## 5. Contradiction Handling Flow
+## 7. Uncertainty lineage examples
 
-Contradiction handling is deterministic:
+Lineage reconstruction is hash-chained by row. Each row records:
 
-`contradiction detected -> governance reason contradiction_requires_audit -> memory_classification quarantined -> canonical_authority_granted false -> contradiction_audit entry emitted`
+- `trace_id`
+- `claim_key`
+- `uncertainty`
+- `ambiguity_class`
+- `contradiction_pressure`
+- `previous_lineage_hash`
+- `lineage_hash`
 
-Proof file:
-
-- `review_packets/proof_logs/constitutional_semantic_proof.json`
-
-Contradiction injection result:
+Proof output:
 
 ```json
 {
-  "trace_id": "constitutional_contradiction_injection",
-  "memory_classification": "quarantined",
-  "canonical_authority_granted": false,
-  "contradiction_pressure": 1.0
+  "event_count": 2,
+  "last_lineage_hash": "967cbca46ea25934dc7b673a2e3ccec5f08f7b05d6b055b7c8192ef6d076e626",
+  "replay_safe": true,
+  "schema": "UNIGURU_UNCERTAINTY_LINEAGE_V1"
 }
 ```
 
-## 6. Mutation Governance Rules
-
-Canonical mutation requires all of:
-
-- trace id exists
-- retrieval truth hash exists
-- interpretation hash exists
-- truth/interpretation boundary status is `ENFORCED`
-- interpretation references retrieval truth
-- verification status is `VERIFIED`
-- at least one accepted signal exists
-- confidence is at least `0.55`
-- contradiction pressure is `0.0`
-- contradiction list is empty
-
-Governance rules emitted in every decision:
-
-- `interpretation_never_mutates_retrieval_truth`
-- `canonical_authority_requires_governance_acceptance`
-- `contradictions_are_audit_events_not_silent_merges`
-- `persistent_writes_are_append_only_and_replayable`
-- `ontology_references_preserve_snapshot_lineage`
-
-## 7. Failure States
+## 8. Failure-state handling
 
 Covered failure states:
 
-- contradictory memory injection
-- invalid ontology mutation without version bump
-- replay corruption
-- missing retrieval truth hash
-- bypassed truth/interpretation boundary
-- memory poisoning attempt
-- low-confidence canonical promotion attempt
-- unverified semantic persistence attempt
-- rollback target reconstruction
+- Confidence inflation: rejected as legitimacy escalation.
+- Reinforcement abuse: detected when repetition pressure is high and legitimacy evidence is weak.
+- Ontology drift: versionless canonical name mutation is audited.
+- Contradiction escalation failure: persistent unresolved contradiction enters `PERSISTENT_UNRESOLVED`.
+- Semantic continuity pressure: unresolved events increase bounded-continuity requirement.
+- Unresolved ambiguity persistence: uncertainty lineage preserves ambiguity class and contradiction pressure.
+- Authority accumulation attempt: authority-gravity diagnostic escalates observability.
+- Probabilistic replay inconsistency: proof artifacts use stable hashes excluding timestamps from deterministic hashes.
 
-Corruption proof:
+## 9. Replay-safe contradiction traces
 
-```json
-{
-  "corruption_tested": true,
-  "hash_chain_ok": false,
-  "expected_detection": true
-}
-```
-
-## 8. Replay Proof Logs
-
-Proof files generated:
-
-- `review_packets/proof_logs/constitutional_semantic_proof.json`
-- `review_packets/proof_logs/constitutional_semantic_events.jsonl`
-- `review_packets/proof_logs/constitutional_semantic_checkpoint.json`
-- `review_packets/proof_logs/constitutional_semantic_observability.json`
-- `review_packets/proof_logs/constitutional_lineage_reconstruction.json`
-- `review_packets/proof_logs/constitutional_replay_qubit.json`
-- `review_packets/proof_logs/constitutional_lineage_vishnu.json`
-- `review_packets/proof_logs/constitutional_transient_governance.json`
-- `review_packets/proof_logs/constitutional_corruption_fixture.jsonl`
-
-Replay checks:
+Proof output:
 
 ```json
 {
-  "retrieval_truth_hash_stable": true,
-  "interpretation_hash_stable": true,
-  "semantic_mutation_id_stable": true,
-  "semantic_event_hash_stable": true,
-  "idempotent_replay_observed": true
-}
-```
-
-## 9. Observability Outputs
-
-Telemetry file:
-
-- `review_packets/proof_logs/constitutional_semantic_observability.json`
-
-Latest telemetry:
-
-```json
-{
-  "schema": "UNIGURU_CONSTITUTIONAL_SEMANTIC_OBSERVABILITY_V1",
-  "event_count": 5,
-  "canonical_entity_count": 4,
-  "transient_event_count": 4,
-  "contradiction_event_count": 1,
-  "hash_chain_ok": true
-}
-```
-
-The observability output is intentionally machine-readable and can be surfaced later in a UI dashboard without adding hidden mutation pathways.
-
-## 10. What Changed / Not Touched
-
-Changed:
-
-- Added constitutional semantic governance event store.
-- Added deterministic semantic mutation acceptance rules.
-- Added replay-safe semantic reconstruction and rollback preview.
-- Added append-only lineage event log and checkpoint.
-- Added semantic observability telemetry.
-- Routed existing memory persistence through governance.
-- Added proof generator for mandatory constitutional examples.
-- Added focused tests for replay, contradiction, ontology mutation, rollback, corruption, poisoning, and lineage continuity.
-- Added architecture documentation.
-
-Not touched:
-
-- No LLM fallback was added.
-- Retrieval truth payload structure remains immutable.
-- Bounded interpretation payload remains separate from retrieval truth.
-- Ontology snapshot files were not rewritten.
-- Frontend UI was not expanded in this sprint.
-- Existing Kosha retrieval semantics were not refactored.
-
-## 11. Real JSON Execution Samples
-
-Canonical accepted sample:
-
-```json
-{
-  "trace_id": "constitutional_lineage_vishnu",
-  "memory_classification": "canonical",
-  "canonical_authority_granted": true,
-  "confidence": 0.5972
-}
-```
-
-Transient rejected sample:
-
-```json
-{
-  "trace_id": "constitutional_replay_qubit",
-  "memory_classification": "transient",
+  "action": "QUARANTINE_AND_ESCALATE_REVIEW",
+  "audit_hash": "d7c36eb4792b5b4a99c2cf537d0e5cdd5320eedfe981489bd640359a4b4b2f5c",
   "canonical_authority_granted": false,
-  "reasons": [
-    "verification_status_not_verified",
-    "no_accepted_signals",
-    "confidence_below_canonical_floor"
+  "lifecycle_state": "PERSISTENT_UNRESOLVED",
+  "lineage_preserved": true,
+  "prior_unresolved_count": 1,
+  "quorum": {
+    "evidence_count": 2,
+    "met": true,
+    "required": 2
+  },
+  "silent_merge_allowed": false
+}
+```
+
+## 10. Real JSON proof samples
+
+Confidence inflation rejection:
+
+```json
+{
+  "boundary_decision": "REJECT_LEGITIMACY_ESCALATION",
+  "confidence": 0.93,
+  "confidence_delta": 0.53,
+  "confidence_inflation_detected": true,
+  "legitimacy_ceiling": 0.0,
+  "reinforcement_abuse_detected": true,
+  "trust_score": 0.0,
+  "uncertainty_preserved": true
+}
+```
+
+Ontology drift audit:
+
+```json
+{
+  "accepted": false,
+  "current_snapshot_version": 1,
+  "previous_snapshot_version": 1,
+  "version_bumped": false,
+  "violations": [
+    {
+      "concept_id": "governed_claim",
+      "current_canonical_name": "Self-Legitimized Semantic Claim",
+      "previous_canonical_name": "Governed Semantic Claim",
+      "type": "canonical_name_change_requires_version_bump"
+    }
   ]
 }
 ```
 
-Poisoning rejection sample:
+Proof assertions:
 
 ```json
 {
-  "trace_id": "constitutional_poisoning_attempt",
-  "memory_classification": "transient",
-  "canonical_authority_granted": false,
-  "reasons": [
-    "missing_retrieval_truth_hash",
-    "truth_interpretation_boundary_not_enforced",
-    "interpretation_does_not_reference_retrieval_truth"
-  ]
+  "authority_accumulation_detected": true,
+  "canonical_authority_never_granted": true,
+  "confidence_inflation_rejected": true,
+  "contradiction_escalated": true,
+  "ontology_drift_audited": true,
+  "uncertainty_lineage_replay_safe": true
 }
 ```
 
-Rollback demonstration:
+## 11. Known risks
 
-```json
-{
-  "rollback_event_count": 1,
-  "rollback_hash_chain_ok": true,
-  "target_event_hash": "ee885e7b53760604fa12610a511526ccd8098b5ee3451eda8022e6b1cf1d131f"
-}
-```
+- The new governance layer is a Python library and proof generator; no API route or dashboard has been added.
+- Thresholds are deterministic constants and need domain review before production calibration.
+- `observed_at` is emitted for operator inspection; deterministic hashes exclude timestamp-like fields through the existing `stable_hash` helper.
+- The layer detects authority pressure but does not by itself enforce downstream product behavior unless callers use `boundary_decision`, `lifecycle_state`, and `authority_gravity`.
+- File-backed proof logs are not a concurrent production event store.
 
-## 12. Known Risks
+## 12. Remaining constitutional risks
 
-- The event store is file-backed JSONL; concurrent writers need a lock or transactional database before high-concurrency production use.
-- Governance confidence floor is fixed at `0.55`; future calibration should be domain-reviewed.
-- Partial rejection presence is visible as a failure state but does not automatically block canonical acceptance when all canonical rules pass.
-- Observability is currently JSON telemetry, not a full dashboard.
-- Legacy `semantic_memory_state.json` remains for continuity compatibility and can accumulate duplicate legacy events even when constitutional mutation is idempotent.
+- Cross-node replay should sign or Merkle-segment batches before distributed trust propagation.
+- Ontology mutation proposals still need a separate constitutional approval command path before writes are allowed.
+- Long-lived unresolved contradiction queues need operator ownership and service-level policy.
+- Reinforcement counts must be sourced from replayable event history, not mutable analytics counters.
+- Any UI added later must remain read-only unless it writes explicit audited governance commands.
 
-## 13. Future Architectural Risks
+## 13. Exact files changed
 
-- Cross-system semantic federation must not merge external canonical states without preserving source event lineage.
-- Ontology registry evolution needs a dedicated constitutional versioning flow before mutable ontology writes are allowed.
-- Long-range reconstruction from partial nodes will need signed event batches or Merkle segment proofs.
-- Retrieval prioritization must avoid treating reinforcement frequency as truth authority.
-- Governance dashboards should remain read-only unless backed by explicit mutation commands and audit events.
+- `backend/governance/semantic_authority.py`
+- `backend/tests/test_semantic_authority_governance.py`
+- `scripts/run_semantic_authority_governance_proof.py`
+- `review_packets/REVIEW_PACKET.md`
+- `review_packets/proof_logs/semantic_authority_governance_proof.json`
+- `review_packets/proof_logs/semantic_drift_telemetry.json`
+- `review_packets/proof_logs/contradiction_replay_audit.json`
+- `review_packets/proof_logs/trust_bound_weighting.json`
+- `review_packets/proof_logs/uncertainty_lineage_reconstruction.json`
 
-## Vinayak Testing Proof
+## 14. Exact files untouched
+
+- `backend/governance/ambiguity.py`
+- `backend/governance/contradiction.py`
+- `backend/governance/authority.py`
+- `backend/governance/epistemic_confidence.py`
+- `backend/governance/source_governance.py`
+- `backend/memory/constitutional_semantic_memory.py`
+- `backend/ontology/drift_detector.py`
+- `backend/kosha/deterministic_pipeline.py`
+- `backend/service/api.py`
+- `frontend/src/App.tsx`
+- `frontend/src/routes/ChatPage.tsx`
+
+## Verification
 
 Commands run:
 
 ```powershell
-python -m compileall backend\memory backend\kosha scripts\run_constitutional_semantic_proof.py
-python -m pytest backend\tests\test_constitutional_semantic_memory.py --basetemp .pytest_tmp
-python scripts\run_constitutional_semantic_proof.py
+python -m compileall backend\governance\semantic_authority.py scripts\run_semantic_authority_governance_proof.py
+python -m pytest backend\tests\test_semantic_authority_governance.py
+python -m pytest backend\tests\test_semantic_authority_governance.py backend\tests\test_constitutional_semantic_memory.py --basetemp .pytest_tmp
+python scripts\run_semantic_authority_governance_proof.py
 ```
 
 Results:
 
-- Compile: passed
-- Focused tests: `5 passed`
-- Proof generation: passed
-- Replay reconstruction: passed
-- Contradiction injection: passed
-- Ontology mutation test: passed
-- Rollback validation: passed
-- Semantic corruption detection: passed
-- Memory poisoning rejection: passed
-- Observability verification: passed
-- Lineage continuity validation: passed
+- Compile passed.
+- Focused tests passed: `5 passed`.
+- Combined semantic authority plus existing constitutional semantic memory tests passed with workspace temp directory: `10 passed`.
+- Proof generation passed and wrote all proof files listed above.
