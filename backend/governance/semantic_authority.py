@@ -14,6 +14,17 @@ def _signal_ids(signals: List[Dict[str, Any]]) -> List[str]:
     return sorted(str(signal.get("signal_id") or "unknown") for signal in signals)
 
 
+def _risk_band(score: float) -> str:
+    score = _clamp(score)
+    if score >= 0.75:
+        return "critical"
+    if score >= 0.55:
+        return "high"
+    if score >= 0.35:
+        return "medium"
+    return "low"
+
+
 class SemanticDriftObservabilityEngine:
     """Deterministic drift telemetry. It observes pressure; it does not mutate truth."""
 
@@ -316,3 +327,355 @@ class UncertaintyLineageTracker:
         }
         payload["lineage_state_hash"] = stable_hash(payload)
         return payload
+
+
+class AuthorityPressureGovernanceEngine:
+    """Forecasts legitimacy pressure without converting pressure into authority."""
+
+    @classmethod
+    def evaluate(
+        cls,
+        *,
+        semantic_events: List[Dict[str, Any]],
+        ontology_boundaries: Dict[str, Any],
+        decay_steps: int = 4,
+    ) -> Dict[str, Any]:
+        claim_keys = sorted({str(event.get("claim_key") or "unclassified_claim") for event in semantic_events})
+        pressure_logs: List[Dict[str, Any]] = []
+        forecasts: List[Dict[str, Any]] = []
+        decay_simulations: List[Dict[str, Any]] = []
+
+        for claim_key in claim_keys:
+            events = [event for event in semantic_events if str(event.get("claim_key") or "unclassified_claim") == claim_key]
+            confidence_pressure = SemanticDriftObservabilityEngine._confidence_pressure(events)
+            reinforcement_pressure = SemanticDriftObservabilityEngine._reinforcement_pressure(events)
+            continuity_pressure = SemanticDriftObservabilityEngine._continuity_pressure(events)
+            contradiction_pressure = max([float(event.get("contradiction_pressure") or 0.0) for event in events] or [0.0])
+            uncertainty = max([float(event.get("uncertainty") or 0.0) for event in events] or [0.0])
+            boundary = ontology_boundaries.get(claim_key, ontology_boundaries.get("default", {}))
+            ontology_ceiling = _clamp(boundary.get("legitimacy_ceiling", 0.45))
+            provenance_weight = _clamp(max([float(event.get("provenance_weight") or 0.0) for event in events] or [0.0]))
+            legitimacy_evidence = _clamp(max([float(event.get("legitimacy_evidence") or 0.0) for event in events] or [0.0]))
+
+            gravity = AuthorityGravityDiagnostics.evaluate(
+                confidence_pressure=confidence_pressure,
+                reinforcement_pressure=reinforcement_pressure,
+                continuity_pressure=continuity_pressure,
+                contradiction_pressure=contradiction_pressure,
+                ontology_violation_count=int(boundary.get("ontology_violation_count", 0)),
+            )
+            latest_confidence = _clamp(events[-1].get("confidence") or 0.0)
+            prior_confidence = _clamp(events[0].get("confidence") or 0.0)
+            weighting = TrustBoundSemanticWeightingFramework.score(
+                confidence=latest_confidence,
+                prior_confidence=prior_confidence,
+                provenance_weight=provenance_weight,
+                legitimacy_evidence=min(legitimacy_evidence, ontology_ceiling),
+                reinforcement_count=int(sum(int(event.get("reinforcement_count") or 0) for event in events)),
+                contradiction_pressure=contradiction_pressure,
+                uncertainty=uncertainty,
+            )
+            trust_ceiling = _clamp(min(ontology_ceiling, weighting["legitimacy_ceiling"]))
+            forecast_score = _clamp(
+                (0.4 * gravity["score"])
+                + (0.25 * confidence_pressure["score"])
+                + (0.2 * reinforcement_pressure["score"])
+                + (0.15 * continuity_pressure["score"])
+            )
+            escalation_required = forecast_score >= trust_ceiling or weighting["boundary_decision"] == "REJECT_LEGITIMACY_ESCALATION"
+
+            pressure_row = {
+                "claim_key": claim_key,
+                "authority_pressure_score": forecast_score,
+                "risk_band": _risk_band(forecast_score),
+                "trust_ceiling": trust_ceiling,
+                "ontology_ceiling": ontology_ceiling,
+                "confidence_pressure": confidence_pressure,
+                "reinforcement_pressure": reinforcement_pressure,
+                "continuity_pressure": continuity_pressure,
+                "contradiction_pressure": _clamp(contradiction_pressure),
+                "uncertainty": _clamp(uncertainty),
+                "authority_gravity": gravity,
+                "governance_response": "ESCALATE_SEMANTIC_PRESSURE"
+                if escalation_required
+                else "OBSERVE_WITH_BOUNDED_TRUST",
+                "canonical_authority_granted": False,
+            }
+            pressure_row["pressure_hash"] = stable_hash(pressure_row)
+            pressure_logs.append(pressure_row)
+
+            forecast = {
+                "claim_key": claim_key,
+                "forecast_score": forecast_score,
+                "legitimacy_accumulation_forecast": _risk_band(forecast_score),
+                "trust_ceiling_enforced": trust_ceiling,
+                "escalation_required": escalation_required,
+                "confidence_not_legitimacy": True,
+                "reinforcement_not_authority": True,
+            }
+            forecast["forecast_hash"] = stable_hash(forecast)
+            forecasts.append(forecast)
+
+            decay_simulations.append(
+                cls.simulate_trust_decay(
+                    claim_key=claim_key,
+                    initial_trust=weighting["trust_score"],
+                    contradiction_pressure=contradiction_pressure,
+                    uncertainty=uncertainty,
+                    reinforcement_pressure=reinforcement_pressure["score"],
+                    steps=decay_steps,
+                )
+            )
+
+        payload = {
+            "schema": "UNIGURU_AUTHORITY_PRESSURE_GOVERNANCE_V1",
+            "authority_pressure_logs": pressure_logs,
+            "semantic_legitimacy_forecast": forecasts,
+            "trust_decay_simulation": decay_simulations,
+            "canonical_authority_granted": False,
+            "rules": [
+                "forecasting_does_not_grant_authority",
+                "trust_ceiling_limits_legitimacy_pressure",
+                "reinforcement_pressure_decays_without_provenance",
+                "confidence_inflation_routes_to_escalation",
+            ],
+        }
+        payload["governance_hash"] = stable_hash(payload)
+        return payload
+
+    @staticmethod
+    def simulate_trust_decay(
+        *,
+        claim_key: str,
+        initial_trust: float,
+        contradiction_pressure: float,
+        uncertainty: float,
+        reinforcement_pressure: float,
+        steps: int,
+    ) -> Dict[str, Any]:
+        rows: List[Dict[str, Any]] = []
+        trust = _clamp(initial_trust)
+        previous_hash: Optional[str] = None
+        for step in range(max(1, int(steps))):
+            decay = _clamp(0.08 + (0.22 * contradiction_pressure) + (0.14 * uncertainty))
+            reinforcement_drag = _clamp(reinforcement_pressure * 0.06)
+            trust = _clamp(trust - decay - reinforcement_drag)
+            row = {
+                "step": step,
+                "claim_key": claim_key,
+                "trust_after_decay": trust,
+                "decay_factor": decay,
+                "reinforcement_drag": reinforcement_drag,
+                "previous_decay_hash": previous_hash,
+            }
+            row["decay_hash"] = stable_hash(row)
+            previous_hash = row["decay_hash"]
+            rows.append(row)
+        payload = {
+            "schema": "UNIGURU_TRUST_DECAY_SIMULATION_V1",
+            "claim_key": claim_key,
+            "initial_trust": _clamp(initial_trust),
+            "final_trust": trust,
+            "steps": rows,
+            "replay_safe": True,
+        }
+        payload["simulation_hash"] = stable_hash(payload)
+        return payload
+
+
+class DistributedContradictionArbitrator:
+    """Deterministic contradiction arbitration across bounded governance nodes."""
+
+    @classmethod
+    def arbitrate(
+        cls,
+        *,
+        disputes: List[Dict[str, Any]],
+        arbitrators: List[Dict[str, Any]],
+        prior_unresolved: Dict[str, int],
+    ) -> Dict[str, Any]:
+        node_ids = sorted(str(node.get("node_id") or "unknown") for node in arbitrators)
+        rows: List[Dict[str, Any]] = []
+        unresolved: List[Dict[str, Any]] = []
+        previous_hash: Optional[str] = None
+
+        for index, dispute in enumerate(sorted(disputes, key=lambda item: str(item.get("claim_key") or ""))):
+            claim_key = str(dispute.get("claim_key") or "unclassified_claim")
+            contradiction_pressure = _clamp(dispute.get("contradiction_pressure") or 0.0)
+            severity = cls._severity(
+                contradiction_pressure=contradiction_pressure,
+                source_count=len(dispute.get("signal_ids") or []),
+                prior_unresolved_count=int(prior_unresolved.get(claim_key, 0)),
+            )
+            governance = ContradictionEscalationGovernance.evaluate(
+                contradictions=[dispute],
+                signals=[{"signal_id": signal_id} for signal_id in dispute.get("signal_ids", [])],
+                prior_unresolved_count=int(prior_unresolved.get(claim_key, 0)),
+                quorum_required=max(2, min(3, len(node_ids))),
+            )
+            reconciliation = {
+                "claim_key": claim_key,
+                "index": index,
+                "severity": severity,
+                "arbitrator_node_ids": node_ids,
+                "contradiction_pressure": contradiction_pressure,
+                "lifecycle_state": governance["lifecycle_state"],
+                "action": governance["action"],
+                "canonical_authority_granted": False,
+                "lineage_preserved": True,
+                "previous_dispute_hash": previous_hash,
+            }
+            reconciliation["dispute_hash"] = stable_hash(reconciliation)
+            previous_hash = reconciliation["dispute_hash"]
+            rows.append(reconciliation)
+            if governance["lifecycle_state"] in {"OBSERVED", "ESCALATED", "PERSISTENT_UNRESOLVED"}:
+                unresolved.append(
+                    {
+                        "claim_key": claim_key,
+                        "persistence_state": "open",
+                        "prior_unresolved_count": int(prior_unresolved.get(claim_key, 0)),
+                        "next_required_action": governance["action"],
+                        "dispute_hash": reconciliation["dispute_hash"],
+                    }
+                )
+
+        payload = {
+            "schema": "UNIGURU_DISTRIBUTED_CONTRADICTION_ARBITRATION_V1",
+            "arbitrator_node_ids": node_ids,
+            "contradiction_arbitration_trace": rows,
+            "unresolved_contradiction_persistence": unresolved,
+            "silent_merge_allowed": False,
+            "replay_safe": True,
+            "last_dispute_hash": previous_hash,
+        }
+        payload["arbitration_hash"] = stable_hash(payload)
+        return payload
+
+    @staticmethod
+    def _severity(*, contradiction_pressure: float, source_count: int, prior_unresolved_count: int) -> str:
+        score = _clamp((0.55 * contradiction_pressure) + (0.25 * min(source_count, 4) / 4) + (0.2 * min(prior_unresolved_count, 3) / 3))
+        return _risk_band(score)
+
+
+class OntologyLegitimacyBoundaryEngine:
+    """Applies ontology-scoped legitimacy ceilings without mutating ontology."""
+
+    @classmethod
+    def evaluate(
+        cls,
+        *,
+        previous_snapshot: Dict[str, Any],
+        current_snapshot: Dict[str, Any],
+        claims: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        drift = detect_semantic_drift(previous_snapshot, current_snapshot)
+        current = {row["concept_id"]: row for row in current_snapshot.get("concepts", [])}
+        boundaries: List[Dict[str, Any]] = []
+        alerts: List[Dict[str, Any]] = []
+
+        for claim in sorted(claims, key=lambda item: str(item.get("claim_key") or "")):
+            concept_id = str(claim.get("concept_id") or "")
+            concept = current.get(concept_id, {})
+            truth_level = int(concept.get("truth_level") or 0)
+            ontology_ceiling = _clamp((truth_level / 5.0) - (0.18 if drift.get("violations") else 0.0))
+            uncertainty = _clamp(claim.get("uncertainty") or 0.0)
+            contradiction_pressure = _clamp(claim.get("contradiction_pressure") or 0.0)
+            semantic_cap = _clamp(ontology_ceiling - (0.22 * uncertainty) - (0.28 * contradiction_pressure))
+            boundary = {
+                "claim_key": str(claim.get("claim_key") or "unclassified_claim"),
+                "concept_id": concept_id,
+                "domain": concept.get("domain"),
+                "truth_level": truth_level,
+                "ontology_legitimacy_ceiling": ontology_ceiling,
+                "semantic_legitimacy_cap": semantic_cap,
+                "lineage_bound_reference": {
+                    "concept_hash": stable_hash(concept) if concept else None,
+                    "snapshot_version": current_snapshot.get("snapshot_version"),
+                },
+                "canonical_authority_granted": False,
+            }
+            boundary["boundary_hash"] = stable_hash(boundary)
+            boundaries.append(boundary)
+            if semantic_cap < _clamp(claim.get("requested_legitimacy") or 0.0) or drift.get("violations"):
+                alert = {
+                    "claim_key": boundary["claim_key"],
+                    "alert": "CONSTITUTIONAL_ONTOLOGY_DRIFT_OR_CAP_EXCEEDED",
+                    "requested_legitimacy": _clamp(claim.get("requested_legitimacy") or 0.0),
+                    "semantic_legitimacy_cap": semantic_cap,
+                    "ontology_drift_accepted": drift["accepted"],
+                    "violation_count": len(drift.get("violations") or []),
+                }
+                alert["alert_hash"] = stable_hash(alert)
+                alerts.append(alert)
+
+        pressure = {
+            "schema": "UNIGURU_ONTOLOGY_PRESSURE_OBSERVABILITY_V1",
+            "drift": drift,
+            "boundary_count": len(boundaries),
+            "alert_count": len(alerts),
+            "mutation_pressure_score": _clamp((len(drift.get("violations") or []) / 3.0) + (len(alerts) / max(len(boundaries), 1) * 0.35)),
+        }
+        pressure["pressure_hash"] = stable_hash(pressure)
+        payload = {
+            "schema": "UNIGURU_ONTOLOGY_LEGITIMACY_BOUNDARY_V1",
+            "ontology_legitimacy_boundaries": boundaries,
+            "semantic_drift_alerts": alerts,
+            "ontology_pressure_observability": pressure,
+            "canonical_authority_granted": False,
+        }
+        payload["boundary_state_hash"] = stable_hash(payload)
+        return payload
+
+
+class SemanticPressureObservabilityEngine:
+    """Combines pressure, contradiction, ontology, and uncertainty into JSON observability."""
+
+    @staticmethod
+    def build(
+        *,
+        pressure_governance: Dict[str, Any],
+        contradiction_arbitration: Dict[str, Any],
+        ontology_boundaries: Dict[str, Any],
+        uncertainty_lineage: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        max_pressure = max(
+            [float(row.get("authority_pressure_score") or 0.0) for row in pressure_governance.get("authority_pressure_logs", [])]
+            or [0.0]
+        )
+        unresolved_count = len(contradiction_arbitration.get("unresolved_contradiction_persistence") or [])
+        alert_count = len(ontology_boundaries.get("semantic_drift_alerts") or [])
+        observability = {
+            "schema": "UNIGURU_SEMANTIC_PRESSURE_OBSERVABILITY_V1",
+            "semantic_pressure_observability": {
+                "max_authority_pressure": _clamp(max_pressure),
+                "unresolved_contradiction_count": unresolved_count,
+                "ontology_alert_count": alert_count,
+                "uncertainty_event_count": int(uncertainty_lineage.get("event_count") or 0),
+                "governance_state": "ESCALATED"
+                if max_pressure >= 0.55 or unresolved_count or alert_count
+                else "BOUNDED_OBSERVATION",
+                "canonical_authority_granted": False,
+            },
+            "authority_gravity_dashboard": {
+                "claims": [
+                    {
+                        "claim_key": row.get("claim_key"),
+                        "authority_pressure_score": row.get("authority_pressure_score"),
+                        "risk_band": row.get("risk_band"),
+                        "governance_response": row.get("governance_response"),
+                    }
+                    for row in pressure_governance.get("authority_pressure_logs", [])
+                ],
+                "dashboard_mode": "json_only",
+            },
+            "uncertainty_continuity_trace": uncertainty_lineage,
+            "trust_lineage_observability": {
+                "pressure_hash": pressure_governance.get("governance_hash"),
+                "arbitration_hash": contradiction_arbitration.get("arbitration_hash"),
+                "ontology_boundary_hash": ontology_boundaries.get("boundary_state_hash"),
+                "uncertainty_lineage_hash": uncertainty_lineage.get("lineage_state_hash"),
+            },
+            "replay_safe": True,
+        }
+        observability["observability_hash"] = stable_hash(observability)
+        return observability

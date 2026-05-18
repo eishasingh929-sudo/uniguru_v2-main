@@ -1,8 +1,8 @@
 # REVIEW_PACKET.md - Semantic Drift Governance and Authority-Bound Cognition Sprint
 
-Generated at: 2026-05-15  
+Generated at: 2026-05-18  
 Status: Implemented and proof-generated  
-Scope: Semantic drift observability, contradiction escalation governance, trust-bound semantic weighting, authority-gravity diagnostics, uncertainty lineage.
+Scope: Semantic drift observability, contradiction escalation governance, trust-bound semantic weighting, authority-gravity diagnostics, uncertainty lineage, constitutional semantic pressure governance, distributed contradiction arbitration, ontology-bound legitimacy ceilings.
 
 ## 1. Entry points
 
@@ -14,8 +14,10 @@ Scope: Semantic drift observability, contradiction escalation governance, trust-
   - `UncertaintyLineageTracker.reconstruct(...)`
 - `scripts/run_semantic_authority_governance_proof.py`
   - Generates machine-readable proof files under `review_packets/proof_logs/`.
+- `scripts/run_semantic_pressure_governance_proof.py`
+  - Generates authority pressure, trust decay, distributed contradiction, ontology boundary, semantic pressure observability, and replay proof artifacts.
 - `backend/tests/test_semantic_authority_governance.py`
-  - Covers drift, contradiction escalation, persistent unresolved contradiction, confidence inflation, reinforcement abuse, and replay-safe uncertainty lineage.
+  - Covers drift, contradiction escalation, persistent unresolved contradiction, confidence inflation, reinforcement abuse, replay-safe uncertainty lineage, authority escalation rejection, trust decay, distributed contradiction persistence, ontology caps, semantic drift alerting, and replay-stable pressure observability.
 
 ## 2. Semantic drift architecture
 
@@ -101,6 +103,19 @@ Proof output:
 }
 ```
 
+Phase 1 pressure outputs:
+
+- `review_packets/proof_logs/authority_pressure_logs.json`
+- `review_packets/proof_logs/trust_decay_simulation.json`
+- `review_packets/proof_logs/semantic_legitimacy_forecast.json`
+
+Additional deterministic rules:
+
+- Forecasting does not grant authority.
+- Trust ceiling limits legitimacy pressure.
+- Reinforcement pressure decays without provenance.
+- Confidence inflation routes to escalation.
+
 ## 7. Uncertainty lineage examples
 
 Lineage reconstruction is hash-chained by row. Each row records:
@@ -132,6 +147,9 @@ Covered failure states:
 - Reinforcement abuse: detected when repetition pressure is high and legitimacy evidence is weak.
 - Ontology drift: versionless canonical name mutation is audited.
 - Contradiction escalation failure: persistent unresolved contradiction enters `PERSISTENT_UNRESOLVED`.
+- Distributed contradiction handling: dispute rows retain arbitrator nodes, severity, lifecycle state, previous dispute hash, and unresolved persistence status.
+- Ontology-bound legitimacy cap breach: requested legitimacy above semantic cap emits constitutional drift/cap alert.
+- Trust decay enforcement: trust decays under contradiction, uncertainty, and reinforcement drag.
 - Semantic continuity pressure: unresolved events increase bounded-continuity requirement.
 - Unresolved ambiguity persistence: uncertainty lineage preserves ambiguity class and contradiction pressure.
 - Authority accumulation attempt: authority-gravity diagnostic escalates observability.
@@ -175,6 +193,35 @@ Confidence inflation rejection:
 }
 ```
 
+Semantic pressure replay proof:
+
+```json
+{
+  "deterministic_replay_verified": true,
+  "canonical_authority_granted": false
+}
+```
+
+Ontology-bound legitimacy cap:
+
+```json
+{
+  "canonical_authority_granted": false,
+  "ontology_legitimacy_ceiling": 0.42,
+  "semantic_legitimacy_cap": 0.1062
+}
+```
+
+Distributed contradiction arbitration:
+
+```json
+{
+  "lifecycle_state": "PERSISTENT_UNRESOLVED",
+  "canonical_authority_granted": false,
+  "lineage_preserved": true
+}
+```
+
 Ontology drift audit:
 
 ```json
@@ -209,11 +256,13 @@ Proof assertions:
 
 ## 11. Known risks
 
-- The new governance layer is a Python library and proof generator; no API route or dashboard has been added.
+- The governance layer is a Python library and proof generator; no API route or dashboard has been added.
 - Thresholds are deterministic constants and need domain review before production calibration.
 - `observed_at` is emitted for operator inspection; deterministic hashes exclude timestamp-like fields through the existing `stable_hash` helper.
 - The layer detects authority pressure but does not by itself enforce downstream product behavior unless callers use `boundary_decision`, `lifecycle_state`, and `authority_gravity`.
 - File-backed proof logs are not a concurrent production event store.
+- Distributed contradiction arbitration is deterministic simulation over named nodes; it is not yet a network consensus protocol.
+- Trust decay is deterministic and replayable, but calibration still needs constitutional policy review.
 
 ## 12. Remaining constitutional risks
 
@@ -222,18 +271,31 @@ Proof assertions:
 - Long-lived unresolved contradiction queues need operator ownership and service-level policy.
 - Reinforcement counts must be sourced from replayable event history, not mutable analytics counters.
 - Any UI added later must remain read-only unless it writes explicit audited governance commands.
+- Runtime API integration must reject or quarantine semantic pressure states instead of merely writing proof logs.
+- Civilization-scale deployment must prevent familiarity and repeated exposure from becoming legitimacy across downstream systems.
 
 ## 13. Exact files changed
 
 - `backend/governance/semantic_authority.py`
 - `backend/tests/test_semantic_authority_governance.py`
-- `scripts/run_semantic_authority_governance_proof.py`
+- `scripts/run_semantic_pressure_governance_proof.py`
 - `review_packets/REVIEW_PACKET.md`
+- `review_packets/UNDERSTANDING_REPORT.md`
 - `review_packets/proof_logs/semantic_authority_governance_proof.json`
 - `review_packets/proof_logs/semantic_drift_telemetry.json`
-- `review_packets/proof_logs/contradiction_replay_audit.json`
-- `review_packets/proof_logs/trust_bound_weighting.json`
-- `review_packets/proof_logs/uncertainty_lineage_reconstruction.json`
+- `review_packets/proof_logs/authority_pressure_logs.json`
+- `review_packets/proof_logs/trust_decay_simulation.json`
+- `review_packets/proof_logs/semantic_legitimacy_forecast.json`
+- `review_packets/proof_logs/contradiction_arbitration_trace.json`
+- `review_packets/proof_logs/distributed_semantic_dispute_log.json`
+- `review_packets/proof_logs/contradiction_replay_proof.json`
+- `review_packets/proof_logs/ontology_legitimacy_boundaries.json`
+- `review_packets/proof_logs/semantic_drift_alerts.json`
+- `review_packets/proof_logs/ontology_pressure_observability.json`
+- `review_packets/proof_logs/semantic_pressure_observability.json`
+- `review_packets/proof_logs/authority_gravity_dashboard.json`
+- `review_packets/proof_logs/uncertainty_continuity_trace.json`
+- `review_packets/proof_logs/constitutional_semantic_pressure_proof.json`
 
 ## 14. Exact files untouched
 
@@ -248,6 +310,10 @@ Proof assertions:
 - `backend/service/api.py`
 - `frontend/src/App.tsx`
 - `frontend/src/routes/ChatPage.tsx`
+- `scripts/run_semantic_authority_governance_proof.py`
+- `review_packets/proof_logs/contradiction_replay_audit.json`
+- `review_packets/proof_logs/trust_bound_weighting.json`
+- `review_packets/proof_logs/uncertainty_lineage_reconstruction.json`
 
 ## Verification
 
@@ -258,11 +324,12 @@ python -m compileall backend\governance\semantic_authority.py scripts\run_semant
 python -m pytest backend\tests\test_semantic_authority_governance.py
 python -m pytest backend\tests\test_semantic_authority_governance.py backend\tests\test_constitutional_semantic_memory.py --basetemp .pytest_tmp
 python scripts\run_semantic_authority_governance_proof.py
+python scripts\run_semantic_pressure_governance_proof.py
 ```
 
 Results:
 
 - Compile passed.
-- Focused tests passed: `5 passed`.
-- Combined semantic authority plus existing constitutional semantic memory tests passed with workspace temp directory: `10 passed`.
+- Focused tests passed.
+- Combined semantic authority plus existing constitutional semantic memory tests passed with workspace temp directory.
 - Proof generation passed and wrote all proof files listed above.
