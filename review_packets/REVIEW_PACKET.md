@@ -1,4 +1,145 @@
-# REVIEW_PACKET.md - Semantic Drift Governance and Authority-Bound Cognition Sprint
+# REVIEW_PACKET.md - Unified UniGuru Runtime Convergence + MasterDB Sprint
+
+Generated at: 2026-05-25  
+Status: Functional runtime convergence implemented with MasterDB starter ingestion  
+Scope: Canonical runtime surface, MasterDB curriculum seed, governed runtime contract, proof artifacts, training readiness, understanding and failure reports.
+
+## Current Sprint Summary
+
+This sprint moves UniGuru from isolated constitutional proof components into a callable runtime path:
+
+`Query -> retrieval / MasterDB lookup -> semantic interpretation -> constitutional evaluation -> trust / contradiction / ontology evaluation -> bounded response generation -> explanation layer -> replay artifact emission`
+
+Canonical entry points:
+
+- `backend/service/uniguru_runtime_api.py`
+  - CLI: `python backend\service\uniguru_runtime_api.py "What is a balanced diet in Class 6 Science?" --grade 6 --medium "English Medium" --subject Science`
+  - API: `POST /runtime/execute`
+- `scripts/ingest_balbharti_masterdb.py`
+  - validates starter MasterDB records and emits ingestion proof.
+- `backend/governance/constitutional_runtime.py`
+  - remains the single governance/replay/trust/observability coordinator.
+
+## Runtime Output Contract
+
+The runtime emits the mandatory contract fields:
+
+- `response_payload`
+- `trust_state`
+- `uncertainty_state`
+- `contradiction_state`
+- `ontology_boundary_state`
+- `constitutional_reasoning_summary`
+- `trace_id`
+- `runtime_hash`
+- `schema_version`
+
+Latest proof output:
+
+- `review_packets/proof_logs/uniguru_runtime_execution_latest.json`
+- trace id: `14fc53010fd6456b`
+- runtime hash: `57f0be64dda0a2a7f8d1acca5a024eeab7f8382eeffd60cf47770ebea670ae6e`
+- contract hash: `0bb10f59c24d26d260171bb31531b64d0c8c73fee7ea7939411536ea0f4b601f`
+
+Proof sample:
+
+```json
+{
+  "schema_version": "UNIGURU_RUNTIME_RESPONSE_CONTRACT_V1",
+  "trace_id": "14fc53010fd6456b",
+  "runtime_hash": "57f0be64dda0a2a7f8d1acca5a024eeab7f8382eeffd60cf47770ebea670ae6e",
+  "trust_state": {
+    "authority_pressure_score": 0.4346,
+    "governance_response": "ESCALATE_SEMANTIC_PRESSURE",
+    "trust_score": 0.3104
+  }
+}
+```
+
+## MasterDB Expansion
+
+Added `masterdb/balbharti/` with:
+
+- `sample_ingestion_dataset.json`
+- `balbharti_schema.json`
+- `curriculum_mapping_notes.md`
+- `proof_artifacts.json`
+- `ingestion_manifest.json`
+
+The starter dataset includes Marathi Medium and English Medium records for Class 1, Class 3, and Class 6 across Mathematics, EVS, and Science. It is a governed seed, not a full curriculum import.
+
+Ingestion proof:
+
+- `review_packets/proof_logs/balbharti_masterdb_ingestion_proof.json`
+- dataset hash: `392b3c1d013633e41200d6716a8f4721917863f41861d2f39c2f417d6eeaecd8`
+- manifest hash: `0b9f1aab41bc132e54ea92c24ec7ef17000a9c2e5ebda6194c68c980073810df`
+- valid records: 6
+- canonical authority granted: false
+
+## Live Runtime Flow
+
+Input:
+
+```powershell
+python backend\service\uniguru_runtime_api.py "What is a balanced diet in Class 6 Science?" --grade 6 --medium "English Medium" --subject Science
+```
+
+Runtime selected:
+
+- record: `balbharti_en_g6_science_food_001`
+- concept: `Balanced diet`
+- subject: `Science`
+- source lineage: `Balbharti English Medium Class 6 Science`
+- provenance status: `sample_seed`
+
+Bounded answer emitted:
+
+```text
+Balanced diet: A balanced diet provides the body with energy, growth nutrients, and protective nutrients in proper amounts. Example: Rice, dal, vegetables, fruit, and milk can form a balanced meal. Practice: What is a balanced diet?
+```
+
+## What Changed
+
+- Added canonical runtime API/CLI surface.
+- Added MasterDB Balbharti starter structure.
+- Added ingestion proof script.
+- Added training readiness report.
+- Replaced understanding report for the functional runtime phase.
+- Added failure report.
+- Updated canonical repo map for one runtime, governance path, replay path, observability layer, proof pipeline, and execution surface.
+
+## What Untouched
+
+- Existing proof generators remain available for regression proofs.
+- Existing `backend/service/api.py` product API was not refactored.
+- Existing frontend routes were not modified.
+- Existing governance engines remain the single constitutional runtime dependency.
+
+## Failure Cases
+
+- MasterDB coverage is partial.
+- Sample seeds are not source-verified page-level records.
+- Runtime retrieval is lexical.
+- The runtime endpoint is not yet mounted into the existing main API app.
+- Distributed replay trust remains deterministic, not network-signed.
+
+## Verification
+
+Commands run:
+
+```powershell
+python scripts\ingest_balbharti_masterdb.py
+python backend\service\uniguru_runtime_api.py "What is a balanced diet in Class 6 Science?" --grade 6 --medium "English Medium" --subject Science
+```
+
+Results:
+
+- MasterDB ingestion proof passed with 6 valid records.
+- Runtime execution emitted the mandatory output contract and wrote `uniguru_runtime_execution_latest.json`.
+
+---
+
+# Prior REVIEW_PACKET.md - Semantic Drift Governance and Authority-Bound Cognition Sprint
 
 Generated at: 2026-05-18  
 Status: Converged into unified constitutional cognition runtime and proof-generated  

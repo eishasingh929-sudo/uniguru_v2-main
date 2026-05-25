@@ -1,0 +1,97 @@
+{
+  "canonical_authority_granted": false,
+  "dataset_hash": "392b3c1d013633e41200d6716a8f4721917863f41861d2f39c2f417d6eeaecd8",
+  "dataset_path": "masterdb/balbharti/sample_ingestion_dataset.json",
+  "generated_at": "2026-05-25T10:04:55.902558Z",
+  "grades": [
+    1,
+    3,
+    6
+  ],
+  "manifest_hash": "0b9f1aab41bc132e54ea92c24ec7ef17000a9c2e5ebda6194c68c980073810df",
+  "mediums": [
+    "English Medium",
+    "Marathi Medium"
+  ],
+  "priority_band_coverage": {
+    "primary_1_5_present": true,
+    "secondary_6_10_present": true
+  },
+  "record_count": 6,
+  "records": [
+    {
+      "canonical_authority_granted": false,
+      "grade": 1,
+      "issues": [],
+      "medium": "English Medium",
+      "record_hash": "7978ead1036bfe56823ffe05b87bc29337c23bd0059e0b614bb5e65060cae665",
+      "record_id": "balbharti_en_g1_math_numbers_001",
+      "source_reference": "Balbharti English Medium Class 1 Mathematics",
+      "subject": "Mathematics",
+      "valid": true
+    },
+    {
+      "canonical_authority_granted": false,
+      "grade": 1,
+      "issues": [],
+      "medium": "Marathi Medium",
+      "record_hash": "2b73348c75ea3e4744096beff60b8d3df5188ae7b1344d75a960c276a01e1bec",
+      "record_id": "balbharti_mr_g1_math_numbers_001",
+      "source_reference": "Balbharti Marathi Medium Class 1 Mathematics",
+      "subject": "Mathematics",
+      "valid": true
+    },
+    {
+      "canonical_authority_granted": false,
+      "grade": 3,
+      "issues": [],
+      "medium": "English Medium",
+      "record_hash": "d078fd99b4aaf383b2ffe29009f658cc24fe9cf0c8b12deffb9e58a428b771a7",
+      "record_id": "balbharti_en_g3_evs_water_001",
+      "source_reference": "Balbharti English Medium Class 3 EVS",
+      "subject": "EVS",
+      "valid": true
+    },
+    {
+      "canonical_authority_granted": false,
+      "grade": 3,
+      "issues": [],
+      "medium": "Marathi Medium",
+      "record_hash": "fd4816852d0d9b58c628ffce0a604fd4956a8b3328df71689f33b39ad67cb058",
+      "record_id": "balbharti_mr_g3_evs_water_001",
+      "source_reference": "Balbharti Marathi Medium Class 3 EVS",
+      "subject": "EVS",
+      "valid": true
+    },
+    {
+      "canonical_authority_granted": false,
+      "grade": 6,
+      "issues": [],
+      "medium": "English Medium",
+      "record_hash": "93726a3b22d9d42c90785ab3eb0184430dca5f540b6d9379a9f28b01594a7710",
+      "record_id": "balbharti_en_g6_science_food_001",
+      "source_reference": "Balbharti English Medium Class 6 Science",
+      "subject": "Science",
+      "valid": true
+    },
+    {
+      "canonical_authority_granted": false,
+      "grade": 6,
+      "issues": [],
+      "medium": "Marathi Medium",
+      "record_hash": "9aafd249276bedfb7ef0083b096b28d5bce03c531b60883603ed8747ce6ba7b6",
+      "record_id": "balbharti_mr_g6_science_food_001",
+      "source_reference": "Balbharti Marathi Medium Class 6 Science",
+      "subject": "Science",
+      "valid": true
+    }
+  ],
+  "replay_safe": true,
+  "schema": "UNIGURU_BALBHARTI_MASTERDB_INGESTION_MANIFEST_V1",
+  "subjects": [
+    "EVS",
+    "Mathematics",
+    "Science"
+  ],
+  "valid_record_count": 6
+}

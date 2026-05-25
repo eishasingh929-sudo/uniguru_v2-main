@@ -1,0 +1,158 @@
+[
+  {
+    "record_id": "balbharti_en_g1_math_numbers_001",
+    "grade": 1,
+    "medium": "English Medium",
+    "subject": "Mathematics",
+    "chapter": "Numbers",
+    "concept": "Counting numbers",
+    "definition": "Counting numbers are used to count objects in order.",
+    "examples": ["1 mango, 2 mangoes, 3 mangoes", "Count five pencils on a desk."],
+    "questions": ["How many fingers are on one hand?", "Count the objects from 1 to 10."],
+    "language_variant": "en-IN",
+    "source_lineage": {
+      "publisher": "Maharashtra State Bureau of Textbook Production and Curriculum Research",
+      "source_type": "curriculum_sample_seed",
+      "source_reference": "Balbharti English Medium Class 1 Mathematics",
+      "page_or_section": "Numbers starter mapping",
+      "ingestion_method": "manual_structured_seed",
+      "provenance_status": "sample_seed"
+    },
+    "curriculum_version": "starter-2026-05",
+    "governance": {
+      "canonical_authority_granted": false,
+      "review_required": true,
+      "replay_safe": true
+    }
+  },
+  {
+    "record_id": "balbharti_mr_g1_math_numbers_001",
+    "grade": 1,
+    "medium": "Marathi Medium",
+    "subject": "Mathematics",
+    "chapter": "Sankhya",
+    "concept": "Mojani",
+    "definition": "Mojani mhanje vastu kramane mojane.",
+    "examples": ["1 amba, 2 ambe, 3 ambe", "Pach pencil moja."],
+    "questions": ["Eka hatala kiti bote astat?", "1 te 10 paryant vastu moja."],
+    "language_variant": "mr-IN",
+    "source_lineage": {
+      "publisher": "Maharashtra State Bureau of Textbook Production and Curriculum Research",
+      "source_type": "curriculum_sample_seed",
+      "source_reference": "Balbharti Marathi Medium Class 1 Mathematics",
+      "page_or_section": "Sankhya starter mapping",
+      "ingestion_method": "manual_structured_seed",
+      "provenance_status": "sample_seed"
+    },
+    "curriculum_version": "starter-2026-05",
+    "governance": {
+      "canonical_authority_granted": false,
+      "review_required": true,
+      "replay_safe": true
+    }
+  },
+  {
+    "record_id": "balbharti_en_g3_evs_water_001",
+    "grade": 3,
+    "medium": "English Medium",
+    "subject": "EVS",
+    "chapter": "Water",
+    "concept": "Uses of water",
+    "definition": "Water is needed for drinking, cooking, washing, plants, and animals.",
+    "examples": ["We drink clean water.", "Plants need water to grow."],
+    "questions": ["Name two uses of water.", "Why should drinking water be clean?"],
+    "language_variant": "en-IN",
+    "source_lineage": {
+      "publisher": "Maharashtra State Bureau of Textbook Production and Curriculum Research",
+      "source_type": "curriculum_sample_seed",
+      "source_reference": "Balbharti English Medium Class 3 EVS",
+      "page_or_section": "Water starter mapping",
+      "ingestion_method": "manual_structured_seed",
+      "provenance_status": "sample_seed"
+    },
+    "curriculum_version": "starter-2026-05",
+    "governance": {
+      "canonical_authority_granted": false,
+      "review_required": true,
+      "replay_safe": true
+    }
+  },
+  {
+    "record_id": "balbharti_mr_g3_evs_water_001",
+    "grade": 3,
+    "medium": "Marathi Medium",
+    "subject": "EVS",
+    "chapter": "Pani",
+    "concept": "Panyache upayog",
+    "definition": "Pani pine, svayampak, dhune, vanaspati ani prani yansathi avashyak aste.",
+    "examples": ["Aapan swachh pani pito.", "Vanaspati vadhisathi pani ghete."],
+    "questions": ["Panyache don upayog sanga.", "Pinyache pani swachh ka asave?"],
+    "language_variant": "mr-IN",
+    "source_lineage": {
+      "publisher": "Maharashtra State Bureau of Textbook Production and Curriculum Research",
+      "source_type": "curriculum_sample_seed",
+      "source_reference": "Balbharti Marathi Medium Class 3 EVS",
+      "page_or_section": "Pani starter mapping",
+      "ingestion_method": "manual_structured_seed",
+      "provenance_status": "sample_seed"
+    },
+    "curriculum_version": "starter-2026-05",
+    "governance": {
+      "canonical_authority_granted": false,
+      "review_required": true,
+      "replay_safe": true
+    }
+  },
+  {
+    "record_id": "balbharti_en_g6_science_food_001",
+    "grade": 6,
+    "medium": "English Medium",
+    "subject": "Science",
+    "chapter": "Food",
+    "concept": "Balanced diet",
+    "definition": "A balanced diet provides the body with energy, growth nutrients, and protective nutrients in proper amounts.",
+    "examples": ["Rice, dal, vegetables, fruit, and milk can form a balanced meal.", "Too much of only one food group is not balanced."],
+    "questions": ["What is a balanced diet?", "Name one energy-giving food and one protective food."],
+    "language_variant": "en-IN",
+    "source_lineage": {
+      "publisher": "Maharashtra State Bureau of Textbook Production and Curriculum Research",
+      "source_type": "curriculum_sample_seed",
+      "source_reference": "Balbharti English Medium Class 6 Science",
+      "page_or_section": "Food starter mapping",
+      "ingestion_method": "manual_structured_seed",
+      "provenance_status": "sample_seed"
+    },
+    "curriculum_version": "starter-2026-05",
+    "governance": {
+      "canonical_authority_granted": false,
+      "review_required": true,
+      "replay_safe": true
+    }
+  },
+  {
+    "record_id": "balbharti_mr_g6_science_food_001",
+    "grade": 6,
+    "medium": "Marathi Medium",
+    "subject": "Science",
+    "chapter": "Anna",
+    "concept": "Santulit aahar",
+    "definition": "Santulit aahar sharirala urja, vadhisathi poshak ghatak ani sanrakshak ghatak yogya pramanat deto.",
+    "examples": ["Bhat, varan, bhaji, phal ani dudh yanchya aaharat santulan asu shakate.", "Ekach prakarche anna jast pramanat khane santulit naste."],
+    "questions": ["Santulit aahar mhanje kay?", "Ek urja denare anna ani ek sanrakshak anna sanga."],
+    "language_variant": "mr-IN",
+    "source_lineage": {
+      "publisher": "Maharashtra State Bureau of Textbook Production and Curriculum Research",
+      "source_type": "curriculum_sample_seed",
+      "source_reference": "Balbharti Marathi Medium Class 6 Science",
+      "page_or_section": "Anna starter mapping",
+      "ingestion_method": "manual_structured_seed",
+      "provenance_status": "sample_seed"
+    },
+    "curriculum_version": "starter-2026-05",
+    "governance": {
+      "canonical_authority_granted": false,
+      "review_required": true,
+      "replay_safe": true
+    }
+  }
+]
