@@ -1,0 +1,21 @@
+{
+  "trace_id": "14fc53010fd6456b",
+  "query": "What is a balanced diet in Class 6 Science?",
+  "retrieved_concepts": [
+    "Balanced diet"
+  ],
+  "curriculum_version": "starter-2026-05",
+  "knowledge_hash": "93726a3b22d9d42c90785ab3eb0184430dca5f540b6d9379a9f28b01594a7710",
+  "source_lineage": {
+    "publisher": "Maharashtra State Bureau of Textbook Production and Curriculum Research",
+    "source_type": "curriculum_sample_seed",
+    "source_reference": "Balbharti English Medium Class 6 Science",
+    "page_or_section": "Food starter mapping",
+    "ingestion_method": "manual_structured_seed",
+    "provenance_status": "sample_seed"
+  },
+  "confidence_state": {
+    "confidence": 1.0,
+    "classification": "sample_seed_requires_review"
+  }
+}

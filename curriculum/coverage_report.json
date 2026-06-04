@@ -1,0 +1,58 @@
+{
+  "schema": "UNIGURU_BALBHARTI_CURRICULUM_COVERAGE_REPORT_V1",
+  "generated_at": "2026-06-04T00:00:00Z",
+  "record_count": 6,
+  "mediums": [
+    "English Medium",
+    "Marathi Medium"
+  ],
+  "subjects": [
+    "EVS",
+    "Mathematics",
+    "Science"
+  ],
+  "grades": [
+    1,
+    3,
+    6
+  ],
+  "chapters": [
+    "Anna",
+    "Food",
+    "Numbers",
+    "Pani",
+    "Sankhya",
+    "Water"
+  ],
+  "concepts": [
+    "Balanced diet",
+    "Counting numbers",
+    "Mojani",
+    "Panyache upayog",
+    "Santulit aahar",
+    "Uses of water"
+  ],
+  "missing_coverage": {
+    "expected_grade_range": [
+      1,
+      10
+    ],
+    "grades_not_ingested": [
+      2,
+      4,
+      5,
+      7,
+      8,
+      9,
+      10
+    ],
+    "subjects_not_ingested": [
+      "History",
+      "Geography",
+      "Language"
+    ],
+    "mediums_not_ingested": [],
+    "notes": "Current dataset is a sample seed; full Balbharti standards 1-10 curriculum remains to be ingested for all subjects and languages."
+  },
+  "curriculum_version": "starter-2026-05"
+}

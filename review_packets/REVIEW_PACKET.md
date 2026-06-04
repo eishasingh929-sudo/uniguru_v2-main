@@ -107,6 +107,23 @@ Balanced diet: A balanced diet provides the body with energy, growth nutrients, 
 - Replaced understanding report for the functional runtime phase.
 - Added failure report.
 - Updated canonical repo map for one runtime, governance path, replay path, observability layer, proof pipeline, and execution surface.
+- Added top-level educational convergence artifacts for curriculum, retrieval, and learning runtime.
+
+## Educational Convergence Deliverables
+
+The sprint now includes:
+
+- `curriculum/curriculum_schema_v1.json`
+- `curriculum/coverage_report.json`
+- `masterdb/masterdb_dashboard.json`
+- `retrieval/retrieval_artifact.json`
+- `retrieval/masterdb_retriever.py`
+- `learning_runtime/learning_runtime_flow.json`
+- `learning_runtime/runtime.py`
+- `review_packets/canonical_repo_map_v2.md`
+- `review_packets/MASTERDB_UNDERSTANDING.md`
+- `review_packets/LEARNING_RUNTIME_UNDERSTANDING.md`
+- `review_packets/FAQ.md`
 
 ## What Untouched
 
