@@ -4,6 +4,8 @@
 
 UniGuru is no longer just semantic proof software because the runtime now accepts a query, retrieves from MasterDB, interprets the result, applies constitutional governance, emits a bounded answer, and writes a replay artifact. The proof system is still present, but it now supports a usable execution path instead of standing apart from it.
 
+The 2026-06-05 Balbharti sprint expands that path with 2,560 synthetic curriculum seed records, curriculum graph generation, retrieval quality proofs, and a learning intelligence layer that returns learning outcomes, practice, remediation, and dependency guidance.
+
 ## 2. Why Curriculum Ingestion Is Constitutionally Sensitive
 
 Curriculum data shapes how children understand facts, language, history, society, science, and identity. If ingestion collapses source uncertainty, translation differences, or edition changes into a single unreviewed answer, the system can accidentally manufacture authority. That makes provenance, contradiction retention, and bounded response discipline mandatory.
@@ -19,8 +21,9 @@ Ordinary RAG usually retrieves chunks and generates an answer. Replay-safe curri
 ## 5. Biggest Remaining Risks
 
 - Full Balbharti ingestion is not complete.
+- The current 2,560-record substrate is a synthetic expansion seed, not verified page-level textbook ingestion.
 - Source verification must be strengthened before canonical authority is allowed.
-- Retrieval is still starter-level lexical matching.
+- Retrieval is grade-aware, medium-aware, and subject-aware, but still starter-level lexical/hybrid scoring rather than production semantic retrieval.
 - Distributed replay trust remains deterministic simulation.
 - Product traffic is not yet fully routed through the new runtime endpoint.
 - Human review and contradiction ownership workflows are still missing.

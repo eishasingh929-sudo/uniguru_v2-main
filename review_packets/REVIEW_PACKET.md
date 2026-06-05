@@ -1,5 +1,81 @@
 # REVIEW_PACKET.md - Unified UniGuru Runtime Convergence + MasterDB Sprint
 
+## 2026-06-05 Balbharti Knowledge Substrate Completion Sprint
+
+Status: Partially converged, operational synthetic seed ready for classroom-style testing.
+
+This sprint extends the canonical UniGuru runtime, not a parallel runtime. The active flow is:
+
+`Student question -> retrieval/retrieval_engine.py -> learning_runtime/learning_intelligence.py -> backend/service/uniguru_runtime_api.py -> backend/governance/constitutional_runtime.py -> proof log`
+
+### Coverage Summary
+
+- Records ingested: 2,560
+- Coverage percent: 100.0% of expected grade-subject-medium cells for this seed scope
+- Grades covered: 1-10
+- Mediums covered: English Medium, Marathi Medium
+- Subjects covered: Civics, EVS, English, Geography, History, Marathi, Mathematics, Science
+- Valid records: 2,560
+- Duplicate record ids: 0
+- Missing grade/subject/medium cells: 0
+- Provenance status: `sample_seed`
+- Canonical authority granted: false
+
+Important limitation: the expansion is a synthetic Balbharti curriculum seed for sprint convergence. It is traceable and replay-safe, but not yet verified page-level textbook ingestion.
+
+### Retrieval And Learning Demo
+
+Generated demo proof: `review_packets/proof_logs/learning_intelligence_demo.json`
+
+Retrieval quality report: `review_packets/proof_logs/retrieval_quality_report.json`
+
+Five required review scenarios now resolve as:
+
+- Grade 2 Marathi/Mathematics -> `balbharti_mr_g2_mathematics_numbers_1_01` / Numbers concept 1
+- Grade 5 History -> `balbharti_en_g5_history_early_people_1_01` / Early People concept 1
+- Grade 7 Geography -> `balbharti_en_g7_geography_maps_1_01` / Maps concept 1
+- Grade 10 Science -> `balbharti_en_g10_science_force_and_motion_6_01` / Force and Motion concept 1
+- Grade 8 English -> `balbharti_en_g8_english_stories_3_01` / Stories concept 1
+
+Learning outputs include curriculum mapping, concept identification, learning outcome, follow-up concepts, practice recommendations, remediation recommendation, difficulty progression, and concept dependency mapping.
+
+### New And Updated Deliverables
+
+- `scripts/expand_balbharti_masterdb.py`
+- `scripts/ingest_balbharti_masterdb.py`
+- `scripts/generate_retrieval_reports.py`
+- `masterdb/coverage_validator.py`
+- `masterdb/masterdb_validation.py`
+- `retrieval/retrieval_engine.py`
+- `retrieval/retrieval_ranking.py`
+- `retrieval/curriculum_graph.json`
+- `learning_runtime/learning_intelligence.py`
+- `learning_runtime/learning_path_generator.py`
+- `learning_runtime/learning_gap_detector.py`
+- `learning_runtime/practice_recommender.py`
+- `review_packets/proof_logs/curriculum_integrity_report.json`
+- `review_packets/proof_logs/retrieval_quality_report.json`
+- `review_packets/proof_logs/learning_intelligence_demo.json`
+
+### Current Proof Hashes
+
+- Dataset hash: `ec4cd3c0c1f87770c4a2e496b88e1156e137e99aef4390fade31222cf8957489`
+- Manifest hash: `05cc4145b24b27f8a270dbcf4224d6cd5ea92d4e34f7aa095cd6628c0a4c81c3`
+- Coverage hash: `d5ef7b1238d8dcf1395a6597d0a3b43a4e0571febc0b0cadc30a7f66520812be`
+- Integrity validation hash: `1972534f243c6254b960e0d605757b765a2991555ff76b6eb5814194ab98731d`
+- Latest runtime hash: `00587305bb8390b3fb63a67d03c5755d735964a62616b0215287eea7ab694b93`
+- Latest contract hash: `49339074c0ff3d56b05f9155b471273cdc3aa07c03c65b1c2633a17f0168246e`
+
+### Known Risks And Next Expansion Roadmap
+
+- Replace synthetic seed definitions with verified Balbharti textbook page/section extracts.
+- Add page-level lineage, OCR/text extraction manifests, and textbook edition registry.
+- Add semantic embeddings or hybrid retrieval while preserving the canonical runtime path.
+- Add student progress memory, mastery estimation, and teacher-facing review workflows.
+- Add CI checks for ingestion validation, retrieval demo quality, and runtime proof emission.
+
+---
+
 Generated at: 2026-05-25  
 Status: Functional runtime convergence implemented with MasterDB starter ingestion  
 Scope: Canonical runtime surface, MasterDB curriculum seed, governed runtime contract, proof artifacts, training readiness, understanding and failure reports.
@@ -139,6 +215,49 @@ The sprint now includes:
 - Runtime retrieval is lexical.
 - The runtime endpoint is not yet mounted into the existing main API app.
 - Distributed replay trust remains deterministic, not network-signed.
+
+## What’s Missing / Incomplete
+
+Assigned Goal:
+- Move UniGuru toward usable educational intelligence.
+
+Delivered:
+- Framework and seed implementation.
+
+Missing:
+
+A. MASTERDB Coverage
+- Current records: 6
+- Required: Thousands
+- Coverage currently: Grades 1, 3, 6
+- Missing: 2, 4, 5, 7, 8, 9, 10
+- Subjects missing: History, Geography, Marathi Language, English Language, Civics
+- Environmental Studies coverage remains minimal
+- This is currently a proof-of-structure, not a production knowledge base.
+
+B. Real Balbharti Ingestion
+- Current: Sample seed dataset
+- Required: Actual curriculum ingestion
+- Needed: chapter-wise coverage, concept extraction, question extraction, learning outcomes, exercises, glossaries, terminology, multilingual mapping
+- Remains largely incomplete.
+
+C. Retrieval Quality
+- Current retrieval: Record lookup
+- Required: True semantic retrieval, concept retrieval, chapter retrieval, multi-concept retrieval, related concept expansion, curriculum path generation, student learning graph generation.
+
+D. Student Runtime
+- Current: Demonstration runtime
+- Required: Actual learning journey, progress tracking, topic mastery, remediation, assessment recommendations, personalized learning path.
+
+E. Teacher Runtime
+- Not started.
+
+F. Evaluation Layer
+- Not started.
+
+G. Dataset Validation
+- Not started.
+- No evidence yet of coverage verification, curriculum completeness verification, missing chapter detection, duplicate detection, curriculum consistency checks.
 
 ## Verification
 

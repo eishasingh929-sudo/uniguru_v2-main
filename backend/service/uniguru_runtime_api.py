@@ -18,8 +18,12 @@ PROOF_DIR = ROOT / "review_packets" / "proof_logs"
 
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from governance.constitutional_runtime import ConstitutionalCognitionRuntime
+from learning_runtime.learning_intelligence import build_learning_intelligence
+from retrieval.retrieval_engine import retrieve_from_masterdb
 from memory.constitutional_semantic_memory import stable_hash, utc_now_iso
 
 
@@ -52,43 +56,13 @@ def _load_masterdb() -> List[Dict[str, Any]]:
     return loaded if isinstance(loaded, list) else []
 
 
-def _score_record(query: str, record: Dict[str, Any], request: RuntimeRequest) -> float:
-    query_tokens = _tokens(query)
-    fields = [
-        record.get("subject"),
-        record.get("chapter"),
-        record.get("concept"),
-        record.get("definition"),
-        " ".join(record.get("examples") or []),
-        " ".join(record.get("questions") or []),
-    ]
-    record_tokens = _tokens(" ".join(str(field or "") for field in fields))
-    overlap = len(query_tokens & record_tokens) / max(len(query_tokens), 1)
-    if request.grade is not None and int(record.get("grade") or 0) == request.grade:
-        overlap += 0.2
-    if request.medium and str(record.get("medium") or "").lower() == request.medium.lower():
-        overlap += 0.2
-    if request.subject and str(record.get("subject") or "").lower() == request.subject.lower():
-        overlap += 0.25
-    return round(min(overlap, 1.0), 4)
-
-
 def _retrieve(query: str, request: RuntimeRequest) -> Dict[str, Any]:
-    records = _load_masterdb()
-    scored = [
-        {"record": record, "score": _score_record(query, record, request)}
-        for record in records
-    ]
-    scored.sort(key=lambda row: row["score"], reverse=True)
-    matches = [row for row in scored if row["score"] > 0][:3]
-    best = matches[0] if matches else None
-    return {
-        "matches": matches,
-        "best_record": best["record"] if best else None,
-        "confidence": best["score"] if best else 0.0,
-        "retrieval_hash": stable_hash(matches),
-        "dataset_path": str(MASTERDB.relative_to(ROOT).as_posix()),
-    }
+    return retrieve_from_masterdb(
+        query=query,
+        grade=request.grade,
+        medium=request.medium,
+        subject=request.subject,
+    )
 
 
 def _interpret(query: str, retrieval: Dict[str, Any]) -> Dict[str, Any]:
@@ -105,6 +79,7 @@ def _interpret(query: str, retrieval: Dict[str, Any]) -> Dict[str, Any]:
     else:
         examples = record.get("examples") or []
         questions = record.get("questions") or []
+        related_concepts = [related.get("concept") for related in retrieval.get("related_records", []) if related.get("concept")]
         answer_parts = [
             f"{record.get('concept')}: {record.get('definition')}",
             f"Example: {examples[0]}" if examples else "",
@@ -115,6 +90,7 @@ def _interpret(query: str, retrieval: Dict[str, Any]) -> Dict[str, Any]:
             "concept_id": str(record.get("record_id")),
             "summary": f"{record.get('medium')} Grade {record.get('grade')} {record.get('subject')} concept.",
             "answer": " ".join(part for part in answer_parts if part),
+            "related_concepts": related_concepts,
             "uncertainty": round(1.0 - float(retrieval.get("confidence") or 0.0), 4),
             "verification_status": "PARTIAL_VERIFIED_SAMPLE"
             if (record.get("source_lineage") or {}).get("provenance_status") == "sample_seed"
@@ -190,10 +166,15 @@ def _govern(query: str, retrieval: Dict[str, Any], interpretation: Dict[str, Any
     return {"semantic_event": semantic_event, "runtime": runtime}
 
 
+def _build_learning_state(query: str, retrieval: Dict[str, Any], interpretation: Dict[str, Any]) -> Dict[str, Any]:
+    return build_learning_intelligence(query, retrieval)
+
+
 def execute_runtime(request: RuntimeRequest) -> Dict[str, Any]:
     query = request.query.strip()
     retrieval = _retrieve(query, request)
     interpretation = _interpret(query, retrieval)
+    learning_state = _build_learning_state(query, retrieval, interpretation)
     governed = _govern(query, retrieval, interpretation)
     runtime_trace = governed["runtime"]["runtime_trace"]
     components = governed["runtime"]["components"]
@@ -209,6 +190,15 @@ def execute_runtime(request: RuntimeRequest) -> Dict[str, Any]:
             "matched_record": retrieval.get("best_record"),
             "retrieval_confidence": retrieval["confidence"],
             "source_lineage": (retrieval.get("best_record") or {}).get("source_lineage"),
+            "curriculum_mapping": {
+                "matched_record_id": (retrieval.get("best_record") or {}).get("record_id"),
+                "curriculum_version": (retrieval.get("best_record") or {}).get("curriculum_version"),
+                "version": (retrieval.get("best_record") or {}).get("version"),
+                "provenance_status": ((retrieval.get("best_record") or {}).get("source_lineage") or {}).get("provenance_status"),
+                "chapter_recommendations": retrieval.get("chapter_recommendations"),
+                "learning_objectives": retrieval.get("learning_objectives"),
+            },
+            "learning_state": learning_state,
         },
         "trust_state": {
             "trust_score": trust_rows[0]["trust_ceiling"] if trust_rows else 0.0,

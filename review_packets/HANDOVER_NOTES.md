@@ -1,5 +1,19 @@
 # Handover Notes
 
+## Balbharti Curriculum Sprint Handover
+
+- MASTERDB now contains 2,560 Balbharti synthetic seed records across grades 1-10, English Medium, Marathi Medium, and eight subjects.
+- Retrieval is integrated through the canonical runtime path: `backend/service/uniguru_runtime_api.py -> retrieval/retrieval_engine.py -> learning_runtime/learning_intelligence.py -> backend/governance/constitutional_runtime.py`.
+- Validation artifacts are regenerated:
+  - `curriculum/coverage_report.json`
+  - `masterdb/balbharti/ingestion_manifest.json`
+  - `review_packets/proof_logs/balbharti_masterdb_ingestion_proof.json`
+  - `review_packets/proof_logs/curriculum_integrity_report.json`
+  - `review_packets/proof_logs/retrieval_quality_report.json`
+  - `review_packets/proof_logs/learning_intelligence_demo.json`
+- The latest runtime proof is `review_packets/proof_logs/uniguru_runtime_execution_latest.json` for Grade 10 Science / Force and Motion.
+- Important caveat: this is a synthetic expansion seed with `provenance_status: sample_seed`; canonical authority remains false until verified textbook page-level ingestion is completed.
+
 ## Current Limitations
 
 - Kosha source entries still contain OCR artifacts and thin fragments; the validator now rejects weak entries instead of stretching them into answers.

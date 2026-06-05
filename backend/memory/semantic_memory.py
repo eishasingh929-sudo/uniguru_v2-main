@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from memory.constitutional_semantic_memory import (
+from .constitutional_semantic_memory import (
     ConstitutionalSemanticMemory,
     build_pipeline_memory_request,
 )

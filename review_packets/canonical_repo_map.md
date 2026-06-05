@@ -29,6 +29,9 @@ Replay is hash-bound through:
 - `constitutional_event_registry` inside `runtime_trace`
 - runtime proof output: `review_packets/proof_logs/uniguru_runtime_execution_latest.json`
 - ingestion proof output: `review_packets/proof_logs/balbharti_masterdb_ingestion_proof.json`
+- curriculum integrity output: `review_packets/proof_logs/curriculum_integrity_report.json`
+- retrieval quality output: `review_packets/proof_logs/retrieval_quality_report.json`
+- learning demo output: `review_packets/proof_logs/learning_intelligence_demo.json`
 
 ## One Observability Layer
 
@@ -47,8 +50,10 @@ Observability is read-only and never grants canonical authority.
 Proof commands:
 
 ```powershell
+python scripts\expand_balbharti_masterdb.py
 python scripts\ingest_balbharti_masterdb.py
-python backend\service\uniguru_runtime_api.py "What is a balanced diet in Class 6 Science?" --grade 6 --medium "English Medium" --subject Science
+python scripts\generate_retrieval_reports.py
+python backend\service\uniguru_runtime_api.py "Grade 10 Science: explain force and motion with an example." --grade 10 --medium "English Medium" --subject Science
 python scripts\run_constitutional_runtime_convergence_proof.py
 ```
 
@@ -56,6 +61,9 @@ Proof files:
 
 - `masterdb/balbharti/ingestion_manifest.json`
 - `review_packets/proof_logs/balbharti_masterdb_ingestion_proof.json`
+- `review_packets/proof_logs/curriculum_integrity_report.json`
+- `review_packets/proof_logs/retrieval_quality_report.json`
+- `review_packets/proof_logs/learning_intelligence_demo.json`
 - `review_packets/proof_logs/uniguru_runtime_execution_latest.json`
 - `review_packets/proof_logs/constitutional_runtime_trace.json`
 
@@ -69,7 +77,9 @@ There are no competing runtime coordinators in this sprint. Older proof scripts 
 
 ## Current Proof Hashes
 
-- MasterDB dataset hash: `392b3c1d013633e41200d6716a8f4721917863f41861d2f39c2f417d6eeaecd8`
-- MasterDB manifest hash: `0b9f1aab41bc132e54ea92c24ec7ef17000a9c2e5ebda6194c68c980073810df`
-- Runtime execution hash: `57f0be64dda0a2a7f8d1acca5a024eeab7f8382eeffd60cf47770ebea670ae6e`
-- Runtime contract hash: `0bb10f59c24d26d260171bb31531b64d0c8c73fee7ea7939411536ea0f4b601f`
+- MasterDB dataset hash: `ec4cd3c0c1f87770c4a2e496b88e1156e137e99aef4390fade31222cf8957489`
+- MasterDB manifest hash: `05cc4145b24b27f8a270dbcf4224d6cd5ea92d4e34f7aa095cd6628c0a4c81c3`
+- Coverage hash: `d5ef7b1238d8dcf1395a6597d0a3b43a4e0571febc0b0cadc30a7f66520812be`
+- Integrity validation hash: `1972534f243c6254b960e0d605757b765a2991555ff76b6eb5814194ab98731d`
+- Runtime execution hash: `00587305bb8390b3fb63a67d03c5755d735964a62616b0215287eea7ab694b93`
+- Runtime contract hash: `49339074c0ff3d56b05f9155b471273cdc3aa07c03c65b1c2633a17f0168246e`
