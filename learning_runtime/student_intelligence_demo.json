@@ -1,0 +1,280 @@
+{
+  "demo_id": "student_intelligence_demo_v1",
+  "demo_version": "1.0.0",
+  "generated_at": "2026-06-09T17:14:37.947+05:30",
+  "demo_scenario": "Sample student progress through Grade 1 Mathematics curriculum",
+  "student": {
+    "student_id": "DEMO_STUDENT_001",
+    "name": "Sample Student",
+    "grade": 1,
+    "class": "Grade 1-A",
+    "enrollment_date": "2026-06-01"
+  },
+  "student_progress_state": {
+    "student_id": "DEMO_STUDENT_001",
+    "snapshot_timestamp": "2026-06-09T17:14:37.947+05:30",
+    "mastery_score": 0.72,
+    "mastery_level": "DEVELOPING",
+    "concepts_attempted": 3,
+    "concepts_mastered": 0,
+    "concepts_developing": 1,
+    "concepts_struggling": 2,
+    "weak_areas": [
+      {
+        "concept_id": "CONCEPT_PLACE_VALUE",
+        "concept_name": "Place Value",
+        "mastery_score": 0.425,
+        "mastery_level": "DEVELOPING",
+        "attempts": 2,
+        "correct_attempts": 0,
+        "accuracy": 0.0,
+        "confidence": 0.475,
+        "priority": "HIGH"
+      },
+      {
+        "concept_id": "CONCEPT_COUNTING",
+        "concept_name": "Counting",
+        "mastery_score": 0.68,
+        "mastery_level": "DEVELOPING",
+        "attempts": 3,
+        "correct_attempts": 2,
+        "accuracy": 0.667,
+        "confidence": 0.683,
+        "priority": "MEDIUM"
+      }
+    ],
+    "concept_strengths": [],
+    "total_exercises_completed": 7,
+    "learning_velocity": 0.085,
+    "recommended_next_steps": [
+      "Focus on remediation for CONCEPT_PLACE_VALUE",
+      "Continue current unit, increase practice"
+    ],
+    "estimated_time_to_grade_mastery": {
+      "status": "IN_PROGRESS",
+      "hours_needed": 5.0,
+      "estimated_weeks": 1.67,
+      "confidence": 0.33
+    }
+  },
+  "concept_mastery_details": {
+    "CONCEPT_NUMBER_RECOGNITION": {
+      "concept_id": "CONCEPT_NUMBER_RECOGNITION",
+      "concept_name": "Number Recognition",
+      "attempts": 2,
+      "correct_attempts": 2,
+      "incorrect_attempts": 0,
+      "total_time_seconds": 230,
+      "average_time_per_attempt": 115,
+      "average_confidence": 0.825,
+      "mastery_score": 0.91,
+      "mastery_level": "MASTERY",
+      "first_attempted": "2026-06-02T09:00:00Z",
+      "last_attempted": "2026-06-02T10:30:00Z",
+      "exercises_completed": [
+        "EX_001_NUMBER_RECOGNITION",
+        "EX_002_NUMBER_RECOGNITION"
+      ],
+      "status": "STRONG_PROGRESS"
+    },
+    "CONCEPT_COUNTING": {
+      "concept_id": "CONCEPT_COUNTING",
+      "concept_name": "Counting",
+      "attempts": 3,
+      "correct_attempts": 2,
+      "incorrect_attempts": 1,
+      "total_time_seconds": 470,
+      "average_time_per_attempt": 157,
+      "average_confidence": 0.683,
+      "mastery_score": 0.68,
+      "mastery_level": "DEVELOPING",
+      "first_attempted": "2026-06-03T09:00:00Z",
+      "last_attempted": "2026-06-04T10:00:00Z",
+      "exercises_completed": [
+        "EX_001_COUNTING",
+        "EX_002_COUNTING",
+        "EX_003_COUNTING"
+      ],
+      "status": "NEEDS_PRACTICE",
+      "improvement_trend": "IMPROVING"
+    },
+    "CONCEPT_PLACE_VALUE": {
+      "concept_id": "CONCEPT_PLACE_VALUE",
+      "concept_name": "Place Value",
+      "attempts": 2,
+      "correct_attempts": 0,
+      "incorrect_attempts": 2,
+      "total_time_seconds": 530,
+      "average_time_per_attempt": 265,
+      "average_confidence": 0.475,
+      "mastery_score": 0.425,
+      "mastery_level": "DEVELOPING",
+      "first_attempted": "2026-06-05T14:00:00Z",
+      "last_attempted": "2026-06-06T15:00:00Z",
+      "exercises_completed": [
+        "EX_001_PLACE_VALUE",
+        "EX_002_PLACE_VALUE"
+      ],
+      "status": "STRUGGLING",
+      "improvement_trend": "FLAT",
+      "alert": "Student needs foundational review"
+    }
+  },
+  "weak_areas_analysis": [
+    {
+      "concept_id": "CONCEPT_PLACE_VALUE",
+      "concept_name": "Place Value",
+      "mastery_score": 0.425,
+      "mastery_level": "DEVELOPING",
+      "attempts": 2,
+      "correct_attempts": 0,
+      "accuracy": 0.0,
+      "confidence": 0.475,
+      "priority": "HIGH",
+      "root_cause_analysis": "Student has not yet mastered prerequisite number sequence concept",
+      "cognitive_barriers": [
+        "Abstract understanding of tens and ones",
+        "Place value decomposition",
+        "Regrouping visualization"
+      ]
+    },
+    {
+      "concept_id": "CONCEPT_COUNTING",
+      "concept_name": "Counting",
+      "mastery_score": 0.68,
+      "mastery_level": "DEVELOPING",
+      "attempts": 3,
+      "correct_attempts": 2,
+      "accuracy": 0.667,
+      "confidence": 0.683,
+      "priority": "MEDIUM",
+      "root_cause_analysis": "Inconsistent performance; occasional errors in one-to-one correspondence",
+      "cognitive_barriers": [
+        "Maintaining count sequence",
+        "One-to-one correspondence accuracy"
+      ]
+    }
+  ],
+  "remediation_recommendations": {
+    "CONCEPT_NUMBER_RECOGNITION": {
+      "concept_id": "CONCEPT_NUMBER_RECOGNITION",
+      "concept_name": "Number Recognition",
+      "current_mastery_score": 0.91,
+      "current_mastery_level": "MASTERY",
+      "remediation_recommended": false,
+      "remediation_urgency": "LOW",
+      "recommended_actions": [],
+      "estimated_remediation_hours": 0.0,
+      "success_probability": 1.0,
+      "status": "MASTERED"
+    },
+    "CONCEPT_COUNTING": {
+      "concept_id": "CONCEPT_COUNTING",
+      "concept_name": "Counting",
+      "current_mastery_score": 0.68,
+      "current_mastery_level": "DEVELOPING",
+      "remediation_recommended": true,
+      "remediation_urgency": "MEDIUM",
+      "recommended_actions": [
+        "Review foundational concepts - especially one-to-one correspondence",
+        "Complete additional practice exercises with manipulatives",
+        "Work with guided examples before independent practice",
+        "Increase practice with scaffolded support"
+      ],
+      "estimated_remediation_hours": 1.0,
+      "success_probability": 0.85,
+      "prerequisites_to_review": ["CONCEPT_NUMBER_RECOGNITION"],
+      "suggested_exercises": [
+        "Counting with visual aids",
+        "One-to-one correspondence matching",
+        "Counting backward exercises"
+      ]
+    },
+    "CONCEPT_PLACE_VALUE": {
+      "concept_id": "CONCEPT_PLACE_VALUE",
+      "concept_name": "Place Value",
+      "current_mastery_score": 0.425,
+      "current_mastery_level": "DEVELOPING",
+      "remediation_recommended": true,
+      "remediation_urgency": "CRITICAL",
+      "recommended_actions": [
+        "CRITICAL: Review foundational concepts (Number Sequence not yet mastered)",
+        "DO NOT advance to place value until CONCEPT_NUMBER_SEQUENCE is mastered",
+        "Complete foundational exercises with tens/ones blocks",
+        "Work with concrete manipulatives before abstract representations",
+        "Delay abstract place value exercises until prerequisites are met"
+      ],
+      "estimated_remediation_hours": 3.0,
+      "success_probability": 0.7,
+      "blocked_by_prerequisites": [
+        "CONCEPT_NUMBER_SEQUENCE (not attempted yet)"
+      ],
+      "prerequisite_mastery_required": [
+        "CONCEPT_NUMBER_SEQUENCE >= 0.80",
+        "CONCEPT_COUNTING >= 0.80"
+      ],
+      "suggested_learning_path": [
+        "Complete CONCEPT_NUMBER_SEQUENCE exercises first",
+        "Then return to CONCEPT_PLACE_VALUE with prerequisite mastery"
+      ],
+      "note": "Place value is abstract; student needs strong foundational skills before proceeding"
+    }
+  },
+  "learning_analytics": {
+    "total_exercises_completed": 7,
+    "exercises_per_concept": {
+      "CONCEPT_NUMBER_RECOGNITION": 2,
+      "CONCEPT_COUNTING": 3,
+      "CONCEPT_PLACE_VALUE": 2
+    },
+    "accuracy_by_concept": {
+      "CONCEPT_NUMBER_RECOGNITION": 1.0,
+      "CONCEPT_COUNTING": 0.667,
+      "CONCEPT_PLACE_VALUE": 0.0
+    },
+    "average_time_per_exercise_seconds": 185.7,
+    "total_learning_time_minutes": 21.75,
+    "learning_velocity": 0.085,
+    "accuracy_trend": "STABLE_WITH_DECLINE",
+    "most_recent_attempt": "2026-06-06T15:00:00Z",
+    "days_active": 5,
+    "consistency_score": 0.72
+  },
+  "teacher_insights": {
+    "student_strengths": [
+      "Strong number recognition skills - mastery level achieved",
+      "Good initial engagement with new topics",
+      "Shows persistence despite errors in place value"
+    ],
+    "areas_of_concern": [
+      "Place value concept not yet mastered - may need intervention",
+      "Some inconsistency in counting exercises",
+      "May benefit from more concrete manipulatives and visual aids"
+    ],
+    "recommended_teacher_actions": [
+      "1. Assess whether prerequisite number sequence understanding is in place",
+      "2. Provide extra practice with concrete tens/ones blocks before abstract place value",
+      "3. Monitor counting exercises for specific error patterns",
+      "4. Consider 1-on-1 review session focusing on place value foundation"
+    ],
+    "intervention_priority": "MEDIUM",
+    "intervention_type": "TARGETED_REMEDIATION"
+  },
+  "integration_with_curriculum": {
+    "grade": 1,
+    "subject": "Mathematics",
+    "textbook": "BALBHARTI_MATH_G1_MM",
+    "current_chapter": "Counting from 1 to 10",
+    "readiness_for_next_chapter": "NOT_READY",
+    "reason": "Place value mastery (Grade 2 concept) required; student still developing Grade 1 concepts",
+    "recommended_action": "Continue within Chapter 1; focus on CONCEPT_COUNTING remediation"
+  },
+  "summary": {
+    "overall_status": "DEVELOPING",
+    "progress_level": "ON_TRACK_WITH_SUPPORT",
+    "next_recommended_action": "Begin remediation for CONCEPT_PLACE_VALUE with prerequisite review",
+    "estimated_completion_date": "2026-06-16",
+    "confidence_in_estimate": 0.33,
+    "support_level_needed": "TARGETED_SUPPORT"
+  }
+}
