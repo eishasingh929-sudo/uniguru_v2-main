@@ -11,14 +11,15 @@
   "known_risks": [
     "The runtime proof is file-backed and deterministic, not a distributed production attestation service.",
     "Thresholds remain constants requiring constitutional calibration.",
-    "Observability outputs are JSON views and must remain read-only in future UI/API surfaces."
+    "Observability outputs are JSON views and must remain read-only in future UI/API surfaces.",
+    "The callable runtime API is implemented separately from the existing product API router until final service wiring."
   ],
   "observability_outputs": "constitutional_observability.json",
   "rollback_authenticity": true,
   "runtime_hash": "ed93a48342b3168c01c72716b103aa351b01fa42ebdac7b48d138e7a2c4cc335",
   "schema": "UNIGURU_CONSTITUTIONAL_RUNTIME_CONVERGENCE_PROOF_V1",
   "semantic_corruption_detected": true,
-  "summary_hash": "5f46655fe1af2d9732c332e04263947ec8387656d43952ef720713ddfdb6aa3f",
+  "summary_hash": "d25e326f5eced704b0d3c258bebf1a982fe43d15fdbb433b426153ae3af1d83a",
   "testing_commands": [
     "python -m compileall backend\\governance\\constitutional_runtime.py scripts\\run_constitutional_runtime_convergence_proof.py",
     "python -m pytest backend\\tests\\test_constitutional_runtime.py backend\\tests\\test_semantic_authority_governance.py --basetemp .pytest_tmp",

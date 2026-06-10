@@ -1,262 +1,135 @@
 {
-  "report_id": "runtime_convergence_report_v1",
-  "report_version": "1.0.0",
-  "generated_at": "2026-06-09T17:14:37.947+05:30",
-  "report_authority": "UniGuru Platform Architecture",
-  "report_purpose": "Evidence that verified curriculum intelligence is the canonical educational execution path",
+  "report_id": "RUNTIME_CONVERGENCE_REPORT_V2",
+  "report_version": "2.0.0",
+  "generated_at": "2026-06-10T10:29:47.400079+00:00",
+  "report_authority": "UniGuru Curriculum Intelligence Platform",
   "convergence_status": "CONVERGED",
-  "convergence_validation_date": "2026-06-09",
-  "executive_summary": {
-    "statement": "UniGuru runtime has converged to a single, verified curriculum intelligence execution path",
-    "key_achievement": "Elimination of parallel curriculum execution paths; canonical path is now primary",
-    "integration_status": "COMPLETE",
-    "production_ready": true
-  },
-  "execution_flow": {
-    "flow_id": "CANONICAL_EXECUTION_FLOW_V1",
-    "flow_description": "Primary educational execution path through constitutional runtime",
-    "stages": [
-      {
-        "stage": 1,
-        "name": "Student Query",
-        "description": "Student asks a curriculum question",
-        "input": "Natural language question from student",
-        "examples": [
-          "How do I count from 1 to 10?",
-          "What is place value?"
-        ]
-      },
-      {
-        "stage": 2,
-        "name": "Query Routing",
-        "description": "Route query to verified curriculum engine",
-        "component": "Query Router (backend/router/conversation_router.py)",
-        "routing_rule": "If educational domain detected → Curriculum Intelligence Engine"
-      },
-      {
-        "stage": 3,
-        "name": "Curriculum Retrieval",
-        "description": "Retrieve verified textbook-backed curriculum content",
-        "component": "Verified Curriculum Ingestor (backend/loaders/verified_curriculum_ingestor.py)",
-        "retrieval_source": "verified_textbook_registry.json",
-        "lineage_tracking": "ENABLED",
-        "synthetic_content_allowed": false
-      },
-      {
-        "stage": 4,
-        "name": "Learning Context Extraction",
-        "description": "Extract student learning context and current mastery",
-        "component": "Mastery Engine (backend/loaders/mastery_engine.py)",
-        "context_data": [
-          "Student mastery scores",
-          "Weak areas",
-          "Learning velocity",
-          "Prerequisite satisfaction"
-        ]
-      },
-      {
-        "stage": 5,
-        "name": "Pedagogical Graph Validation",
-        "description": "Check prerequisites and learning progressions",
-        "component": "Pedagogical Graph (curriculum/extracted/pedagogical_graph.json)",
-        "validation_checks": [
-          "Prerequisite satisfaction",
-          "Learning path continuity",
-          "Appropriate difficulty level"
-        ]
-      },
-      {
-        "stage": 6,
-        "name": "Curriculum Intelligence Generation",
-        "description": "Generate personalized curriculum intelligence",
-        "component": "Mastery Engine + Pedagogical Graph",
-        "output_includes": [
-          "Curriculum content",
-          "Learning recommendations",
-          "Remediation suggestions",
-          "Progress tracking"
-        ]
-      },
-      {
-        "stage": 7,
-        "name": "Constitutional Runtime Processing",
-        "description": "Process through constitutional governance and safety rules",
-        "component": "backend/core/engine.py + governance rules",
-        "rule_verification": [
-          "Authority validation (Balbharti source)",
-          "Content verification (lineage check)",
-          "Safety enforcement (no synthetic content)",
-          "Response sealing"
-        ]
-      },
-      {
-        "stage": 8,
-        "name": "Runtime Output",
-        "description": "Return verified curriculum intelligence to student",
-        "output_schema": "student_progress_contract.json",
-        "output_includes": [
-          "Verified curriculum content with lineage",
-          "Mastery score and progress",
-          "Recommended next steps",
-          "Remediation guidance (if needed)"
-        ]
-      }
-    ],
-    "flow_validation": {
-      "lineage_visible": true,
-      "mastery_tracked": true,
-      "no_parallel_paths": true,
-      "governance_enforced": true,
-      "constitutional_runtime_integrated": true,
-      "flow_validation_status": "PASSED"
-    }
-  },
-  "parallel_path_elimination": {
-    "statement": "All parallel curriculum execution paths have been eliminated",
-    "previous_state": [
-      {
-        "path": "Synthetic curriculum generation",
-        "status": "DEPRECATED",
-        "reason": "Replaced with verified Balbharti textbook ingestion"
-      },
-      {
-        "path": "Independent LLM curriculum creation",
-        "status": "DEPRECATED",
-        "reason": "All curriculum sourced from verified textbooks only"
-      },
-      {
-        "path": "Multiple knowledge bases without lineage",
-        "status": "CONSOLIDATED",
-        "reason": "Unified under verified curriculum with complete lineage tracking"
-      }
-    ],
-    "current_state": {
-      "canonical_path_only": true,
-      "verified_curriculum_backend": "backend/loaders/verified_curriculum_ingestor.py",
-      "all_content_sourced": "Verified Balbharti textbooks only",
-      "lineage_tracking": "MANDATORY",
-      "parallel_path_count": 0,
-      "enforcement_status": "ENABLED"
-    },
-    "elimination_validation": "COMPLETE"
-  },
-  "integration_proof": {
-    "proof_element_1": {
-      "element": "Query → Curriculum Retrieval Path Validation",
-      "validation": "Student queries are routed to verified curriculum engine with no alternative paths",
-      "evidence": "Query router configuration maps all educational domains to curriculum intelligence"
-    },
-    "proof_element_2": {
-      "element": "Content Lineage Validation",
-      "validation": "All curriculum content returned includes complete lineage chain",
-      "evidence": "Every response includes lineage_chain field with Textbook→Chapter→Concept→Exercise",
-      "implementation": "verified_curriculum_ingestor.py enforces lineage for all content"
-    },
-    "proof_element_3": {
-      "element": "No Synthetic Content Detection",
-      "validation": "System rejects any synthetic or non-textbook content",
-      "evidence": "Curriculum source manifest specifies 'no_synthetic_content_allowed': true",
-      "enforcement": "ingestion_proof.json validates no synthetic injection"
-    },
-    "proof_element_4": {
-      "element": "Mastery Tracking Integration",
-      "validation": "Student progress is tracked through constitutional runtime",
-      "evidence": "Mastery engine integrates with pedagogical graph for prerequisite validation",
-      "output_format": "student_progress_state includes complete mastery metrics"
-    },
-    "proof_element_5": {
-      "element": "Constitutional Runtime Governance",
-      "validation": "All curriculum responses pass through governance rules",
-      "evidence": "backend/core/engine.py processes all outputs through authority and safety rules",
-      "verification": "Response sealing enforces rule compliance"
-    }
-  },
-  "kosha_integration": {
-    "integration_point": "Verified Curriculum → Kosha RAG System",
-    "integration_status": "ENABLED",
-    "kosha_knowledge_mapping": {
-      "balbharti_textbook_id": "kosha_knowledge_id_prefix",
-      "edition_id": "kosha_version",
-      "lineage_chain": "kosha_source_lineage",
-      "textbook_authority": "kosha_source_authority"
-    },
-    "kosha_enhanced_capabilities": [
-      "Verified source attribution in all Kosha responses",
-      "Complete lineage visibility in knowledge retrieval",
-      "Pedagogical graph integration for context-aware retrieval",
-      "Mastery-aware curriculum recommendations"
-    ],
-    "kosha_integration_validation": "COMPLETE"
-  },
-  "teacher_integration": {
-    "integration_point": "Verified Curriculum Intelligence → Teacher Runtime",
-    "integration_status": "ENABLED",
-    "teacher_views_provided": [
-      "Class View - aggregate mastery metrics",
-      "Student Progress View - per-student mastery tracking",
-      "Curriculum Completion View - unit/chapter status",
-      "Remediation View - intervention prioritization"
-    ],
-    "teacher_integration_validation": "COMPLETE"
-  },
-  "convergence_validation_checklist": [
+  "canonical_pipeline": [
+    "StudentQuery",
+    "Retrieval",
+    "CurriculumIntelligence",
+    "LearningIntelligence",
+    "MasteryIntelligence",
+    "ConstitutionalRuntime",
+    "RuntimeContract"
+  ],
+  "no_parallel_paths_validated": true,
+  "sample_executions": [
     {
-      "item": "Single canonical execution path exists",
-      "status": "VERIFIED",
-      "evidence": "Query router maps all educational queries to unified curriculum intelligence"
+      "query": "What is counting?",
+      "stages_executed": [
+        "StudentQuery",
+        "Retrieval",
+        "CurriculumIntelligence",
+        "LearningIntelligence",
+        "MasteryIntelligence",
+        "ConstitutionalRuntime",
+        "RuntimeContract"
+      ],
+      "mastery_score": 0.0,
+      "convergence_validated": true
     },
     {
-      "item": "No parallel curriculum paths",
-      "status": "VERIFIED",
-      "evidence": "All alternative curriculum sources deprecated; only Balbharti ingestion active"
+      "query": "What is place value?",
+      "stages_executed": [
+        "StudentQuery",
+        "Retrieval",
+        "CurriculumIntelligence",
+        "LearningIntelligence",
+        "MasteryIntelligence",
+        "ConstitutionalRuntime",
+        "RuntimeContract"
+      ],
+      "mastery_score": 0.0,
+      "convergence_validated": true
     },
     {
-      "item": "Lineage visible throughout execution",
-      "status": "VERIFIED",
-      "evidence": "curriculum_lineage_registry.json tracks complete chain for all elements"
-    },
-    {
-      "item": "Mastery intelligence integrated",
-      "status": "VERIFIED",
-      "evidence": "mastery_engine.py provides real-time mastery tracking"
-    },
-    {
-      "item": "Pedagogical graph enforced",
-      "status": "VERIFIED",
-      "evidence": "learning_path_validation.json validates all prerequisite chains"
-    },
-    {
-      "item": "Constitutional runtime integration",
-      "status": "VERIFIED",
-      "evidence": "governance rules applied to all curriculum outputs"
-    },
-    {
-      "item": "Teacher intelligence operational",
-      "status": "VERIFIED",
-      "evidence": "teacher_runtime.py generates class/student/curriculum/remediation views"
-    },
-    {
-      "item": "Kosha system integration",
-      "status": "VERIFIED",
-      "evidence": "Verified curriculum mapped to Kosha knowledge schema"
-    },
-    {
-      "item": "No synthetic content allowed",
-      "status": "VERIFIED",
-      "evidence": "ingestion_proof.json enforces no_synthetic_content_allowed = true"
-    },
-    {
-      "item": "Production-ready state",
-      "status": "VERIFIED",
-      "evidence": "All components tested and validated"
+      "query": "What is addition?",
+      "stages_executed": [
+        "StudentQuery",
+        "Retrieval",
+        "CurriculumIntelligence",
+        "LearningIntelligence",
+        "MasteryIntelligence",
+        "ConstitutionalRuntime",
+        "RuntimeContract"
+      ],
+      "mastery_score": 0.0,
+      "convergence_validated": true
     }
   ],
-  "convergence_status_final": {
-    "convergence_achieved": true,
-    "convergence_date": "2026-06-09",
-    "convergence_validation_status": "PASSED",
-    "production_readiness": "READY",
-    "canonical_path_status": "PRIMARY_AND_EXCLUSIVE",
-    "all_requirements_met": true
+  "pipeline_trace_samples": [
+    [
+      {
+        "stage": "retrieval",
+        "matched": true,
+        "confidence": 1.0,
+        "latency_ms": 88.42
+      },
+      {
+        "stage": "curriculum_intelligence",
+        "concept_resolved": true,
+        "lineage_present": true,
+        "latency_ms": 0.0
+      },
+      {
+        "stage": "learning_intelligence",
+        "gap_detected": true,
+        "path_generated": true,
+        "latency_ms": 0.42
+      },
+      {
+        "stage": "mastery_intelligence",
+        "mastery_score": 0.0,
+        "weak_areas_count": 0,
+        "latency_ms": 0.38
+      },
+      {
+        "stage": "constitutional_runtime",
+        "available": true,
+        "decision": "forward",
+        "latency_ms": 9.84
+      }
+    ],
+    [
+      {
+        "stage": "retrieval",
+        "matched": true,
+        "confidence": 0.9,
+        "latency_ms": 84.32
+      },
+      {
+        "stage": "curriculum_intelligence",
+        "concept_resolved": true,
+        "lineage_present": true,
+        "latency_ms": 0.0
+      },
+      {
+        "stage": "learning_intelligence",
+        "gap_detected": true,
+        "path_generated": true,
+        "latency_ms": 0.4
+      },
+      {
+        "stage": "mastery_intelligence",
+        "mastery_score": 0.0,
+        "weak_areas_count": 0,
+        "latency_ms": 0.06
+      },
+      {
+        "stage": "constitutional_runtime",
+        "available": true,
+        "decision": "forward",
+        "latency_ms": 7.74
+      }
+    ]
+  ],
+  "validation_checks": {
+    "single_retrieval_path": true,
+    "mastery_intelligence_active": true,
+    "curriculum_intelligence_active": true,
+    "constitutional_runtime_integrated": true,
+    "no_web_retrieval": true,
+    "lineage_preserved": true
   }
 }

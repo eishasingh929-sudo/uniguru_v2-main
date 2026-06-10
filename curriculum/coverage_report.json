@@ -196,7 +196,7 @@
     "coverage_hash": "d5ef7b1238d8dcf1395a6597d0a3b43a4e0571febc0b0cadc30a7f66520812be",
     "coverage_percent": 100.0,
     "expected_grade_subject_medium_cells": 160,
-    "generated_at": "2026-06-05T17:37:10.868808Z",
+    "generated_at": "2026-06-09T12:38:19.310858Z",
     "grades_covered": [
       1,
       2,
@@ -258,7 +258,7 @@
     ]
   },
   "curriculum_version": "balbharti-2026-06",
-  "generated_at": "2026-06-05T17:37:10.885365Z",
+  "generated_at": "2026-06-09T12:38:19.325880Z",
   "grades": [
     1,
     2,
