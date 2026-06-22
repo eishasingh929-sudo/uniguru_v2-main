@@ -17,6 +17,7 @@ No parallel execution paths.
 from __future__ import annotations
 
 import json
+import hashlib
 import sys
 import time
 import uuid
@@ -27,6 +28,19 @@ from typing import Any, Dict, List, Optional
 ROOT = Path(__file__).resolve().parents[1]
 _RETRIEVAL_DIR = ROOT / "retrieval"
 _RETRIEVAL_ENGINE = ROOT / "retrieval" / "retrieval_engine.py"
+_CANONICAL_MANIFEST = ROOT / "canonical_dataset_manifest.json"
+_KNOWLEDGE_PACK_MANIFEST = ROOT / "production_knowledge_pack" / "manifest.json"
+_CONSTITUTION_METADATA = ROOT / "production_knowledge_pack" / "constitution_metadata.json"
+_RUNTIME_SCHEMA_VERSION = "UNIGURU_CANONICAL_RUNTIME_V2"
+_REQUIRED_PIPELINE_STAGES = [
+    "StudentQuery",
+    "Retrieval",
+    "CurriculumIntelligence",
+    "LearningIntelligence",
+    "MasteryIntelligence",
+    "ConstitutionalRuntime",
+    "RuntimeContract",
+]
 
 # Ensure both project root and the retrieval package dir are on sys.path
 for _p in [str(ROOT), str(ROOT / "backend"), str(_RETRIEVAL_DIR.parent)]:
@@ -93,6 +107,141 @@ class CanonicalRuntime:
             self._mastery_engines[student_id] = MasteryEngine(student_id=student_id, grade=grade)
         return self._mastery_engines[student_id]
 
+    def _load_json_file(self, path: Path) -> Dict[str, Any]:
+        if not path.exists():
+            raise ValueError(f"[SAFETY_GATE] Missing required production artifact: {path.relative_to(ROOT)}")
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(loaded, dict):
+            raise ValueError(f"[SAFETY_GATE] Invalid production artifact shape: {path.relative_to(ROOT)}")
+        return loaded
+
+    def _canonical_manifest(self) -> Dict[str, Any]:
+        return self._load_json_file(_CANONICAL_MANIFEST)
+
+    def _knowledge_pack_manifest(self) -> Dict[str, Any]:
+        return self._load_json_file(_KNOWLEDGE_PACK_MANIFEST)
+
+    def _constitution_metadata(self) -> Dict[str, Any]:
+        return self._load_json_file(_CONSTITUTION_METADATA)
+
+    def _expected_lineage_hash(self, evidence: Dict[str, Any]) -> str:
+        lineage_str = (
+            f"{evidence.get('textbook_id')}::{evidence.get('edition')}::"
+            f"{evidence.get('chapter')}::{evidence.get('section')}::{evidence.get('page_numbers')}"
+        )
+        return hashlib.sha256(lineage_str.encode("utf-8")).hexdigest()
+
+    def _blocked_contract(self, request_id: str, student_id: str, query: str, reason: str) -> Dict[str, Any]:
+        return {
+            "request_id": request_id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "schema_version": _RUNTIME_SCHEMA_VERSION,
+            "student_id": student_id,
+            "query": query,
+            "blocked": True,
+            "block_reason": reason,
+            "verification_status": "BLOCKED",
+            "convergence_validated": False,
+        }
+
+    def _validate_production_gates(self, best_record: Dict[str, Any], evidence: Dict[str, Any]) -> None:
+        """
+        Strict production safety gates — raises ValueError immediately on failure.
+        No silent fallback is permitted.
+        """
+        # Gate 1: Authority — record must be from canonical path
+        manifest = self._canonical_manifest()
+        pack_manifest = self._knowledge_pack_manifest()
+        constitution_metadata = self._constitution_metadata()
+
+        source_lineage = best_record.get("source_lineage") or {}
+        provenance = source_lineage.get("provenance_status", "")
+        if provenance != "VERIFIED":
+            raise ValueError(
+                f"[SAFETY_GATE] Authority failure: provenance_status='{provenance}' "
+                f"on record '{best_record.get('record_id')}'. "
+                "Only VERIFIED records are permitted in the canonical runtime."
+            )
+        for field in ("publisher", "board", "isbn", "authority_signature", "verification_timestamp"):
+            if not source_lineage.get(field):
+                raise ValueError(
+                    f"[SAFETY_GATE] Authority failure: missing '{field}' in source lineage "
+                    f"for record '{best_record.get('record_id')}'."
+                )
+
+        # Gate 2: Evidence handle must be present
+        if not evidence or not evidence.get("evidence_id"):
+            raise ValueError(
+                f"[SAFETY_GATE] Evidence failure: no evidence handle on record "
+                f"'{best_record.get('record_id')}'. Evidence injection is mandatory."
+            )
+
+        # Gate 3: Lineage fields must be present
+        for field in ("textbook_id", "edition", "chapter", "section", "lineage_hash"):
+            if not evidence.get(field):
+                raise ValueError(
+                    f"[SAFETY_GATE] Lineage failure: missing '{field}' in evidence handle "
+                    f"for record '{best_record.get('record_id')}'."
+                )
+        if not evidence.get("page_numbers"):
+            raise ValueError(
+                f"[SAFETY_GATE] Lineage failure: missing page_numbers in evidence handle "
+                f"for record '{best_record.get('record_id')}'."
+            )
+        if evidence.get("lineage_hash") != self._expected_lineage_hash(evidence):
+            raise ValueError(
+                f"[SAFETY_GATE] Lineage failure: lineage_hash mismatch on record "
+                f"'{best_record.get('record_id')}'."
+            )
+
+        # Gate 4: Content hash must exist
+        if not evidence.get("source_hash"):
+            raise ValueError(
+                f"[SAFETY_GATE] Hash failure: missing 'source_hash' in evidence handle "
+                f"for record '{best_record.get('record_id')}'."
+            )
+        if evidence.get("source_hash") != source_lineage.get("source_hash"):
+            raise ValueError(
+                f"[SAFETY_GATE] Hash failure: evidence source_hash does not match source lineage "
+                f"for record '{best_record.get('record_id')}'."
+            )
+
+        if manifest.get("validation_status") != "ALL_VERIFIED":
+            raise ValueError("[SAFETY_GATE] Version failure: canonical manifest is not ALL_VERIFIED.")
+        if best_record.get("version") != best_record.get("curriculum_version"):
+            raise ValueError(
+                f"[SAFETY_GATE] Version failure: version and curriculum_version differ on "
+                f"record '{best_record.get('record_id')}'."
+            )
+        if pack_manifest.get("dataset_hash") != manifest.get("dataset_hash"):
+            raise ValueError("[SAFETY_GATE] Dataset signature failure: knowledge pack hash mismatch.")
+        if not manifest.get("dataset_signature"):
+            raise ValueError("[SAFETY_GATE] Dataset signature failure: manifest signature missing.")
+
+        required_gates = {
+            "authority",
+            "evidence",
+            "lineage",
+            "hash",
+            "version",
+            "dataset_signature",
+            "constitution",
+            "runtime_contract",
+        }
+        configured_gates = set(constitution_metadata.get("safety_gates") or [])
+        if not required_gates.issubset(configured_gates):
+            raise ValueError("[SAFETY_GATE] Constitution failure: required safety gates are incomplete.")
+        if constitution_metadata.get("failure_policy") != "refuse canonical execution":
+            raise ValueError("[SAFETY_GATE] Constitution failure: refusal policy is not enforced.")
+
+        # Gate 5: Governance — canonical_authority_granted must be True
+        governance = best_record.get("governance") or {}
+        if not governance.get("canonical_authority_granted", False):
+            raise ValueError(
+                f"[SAFETY_GATE] Governance failure: canonical_authority_granted=False "
+                f"on record '{best_record.get('record_id')}'."
+            )
+
     def execute(
         self,
         query: str,
@@ -125,6 +274,28 @@ class CanonicalRuntime:
         )
         best_record = retrieval_payload.get("best_record") or {}
         retrieval_confidence = retrieval_payload.get("confidence", 0.0)
+
+        # Extract evidence handle injected by retrieval engine
+        evidence_handle = best_record.get("evidence") or {}
+
+        # Production safety gates: no canonical match means no evidence chain.
+        if not best_record:
+            return self._blocked_contract(
+                request_id=request_id,
+                student_id=student_id,
+                query=query,
+                reason="[SAFETY_GATE] Evidence failure: no canonical retrieval match. Refusing execution.",
+            )
+        try:
+            self._validate_production_gates(best_record, evidence_handle)
+        except ValueError as gate_err:
+            return self._blocked_contract(
+                request_id=request_id,
+                student_id=student_id,
+                query=query,
+                reason=str(gate_err),
+            )
+
         trace.append({
             "stage": "retrieval",
             "matched": bool(best_record),
@@ -144,6 +315,8 @@ class CanonicalRuntime:
             "curriculum_version": best_record.get("curriculum_version"),
             "matched_record_id":  best_record.get("record_id"),
             "provenance_status":  (best_record.get("source_lineage") or {}).get("provenance_status"),
+            # Evidence handle injected by retrieval engine — passed through to _bind_contract
+            "evidence":           evidence_handle,
         }
         trace.append({
             "stage": "curriculum_intelligence",
@@ -219,118 +392,19 @@ class CanonicalRuntime:
 
         return runtime_contract
 
-    def _resolve_evidence(self, curriculum_intelligence: Dict[str, Any], retrieval_confidence: float) -> Dict[str, Any]:
-        import json
-        import hashlib
-        import uuid
-        from pathlib import Path
-
-        ROOT = Path(__file__).resolve().parents[1]
-        provenance_dir = ROOT / "curriculum" / "provenance"
-        authority_dir = ROOT / "curriculum" / "authority"
-
-        # Defaults
-        evidence_id = str(uuid.uuid4())
-        textbook_id = "BALBHARTI_MATH_G1_MM"
-        edition = "2023"
-        chapter = "Counting from 1 to 10"
-        section = "Number Recognition (1-5)"
-        page_numbers = [3]
-        source_hash = "e7f23a18a99478f24419ad24f6828a2a078fa46b3f9b80ce27d14896a202a0a2"
-        retrieval_hash = hashlib.sha256(str(retrieval_confidence).encode("utf-8")).hexdigest()
-        lineage_hash = hashlib.sha256(b"lineage_hash_default").hexdigest()
-        verification_status = "VERIFIED"
-
-        try:
-            concept_id = curriculum_intelligence.get("matched_record_id") or curriculum_intelligence.get("concept")
-            
-            # Try loading registries
-            concept_mapping_path = provenance_dir / "concept_page_mapping.json"
-            page_registry_path = provenance_dir / "page_registry.json"
-            authority_registry_path = authority_dir / "verified_textbook_authority_registry.json"
-
-            concept_mapping = {}
-            if concept_mapping_path.exists():
-                with open(concept_mapping_path, "r", encoding="utf-8") as f:
-                    concept_mapping = json.load(f)
-
-            # Look up by concept or record ID
-            matched_mapping = None
-            if concept_id and concept_id in concept_mapping:
-                matched_mapping = concept_mapping[concept_id]
-            else:
-                # Let's try matching subject and grade
-                subject = curriculum_intelligence.get("subject") or "Mathematics"
-                # If subject matches, map to a realistic concept
-                if "math" in str(subject).lower():
-                    # Check if grade is 2
-                    is_g2 = "grade 2" in str(curriculum_intelligence.get("definition") or "").lower() or "g2" in str(concept_id).lower()
-                    if is_g2:
-                        matched_mapping = concept_mapping.get("BALBHARTI_MATH_G2_MM_CONCEPT_001")
-                    else:
-                        matched_mapping = concept_mapping.get("BALBHARTI_MATH_G1_MM_CONCEPT_001")
-                elif "english" in str(subject).lower() or "eng" in str(concept_id).lower():
-                    for k, v in concept_mapping.items():
-                        if v.get("textbook_id") == "BALBHARTI_ENGLISH_G1_MM":
-                            matched_mapping = v
-                            break
-                elif "science" in str(subject).lower() or "sci" in str(concept_id).lower():
-                    for k, v in concept_mapping.items():
-                        if v.get("textbook_id") == "BALBHARTI_SCIENCE_G3_MM":
-                            matched_mapping = v
-                            break
-
-            if not matched_mapping:
-                # If still not found, take the first entry in mapping
-                if concept_mapping:
-                    matched_mapping = list(concept_mapping.values())[0]
-
-            if matched_mapping:
-                textbook_id = matched_mapping.get("textbook_id", textbook_id)
-                edition = matched_mapping.get("edition", edition)
-                page_numbers = [matched_mapping.get("page_number", page_numbers[0])]
-                chapter = matched_mapping.get("chapter", chapter)
-                section = matched_mapping.get("section", section)
-
-            # Get source hash from page registry
-            if page_registry_path.exists():
-                with open(page_registry_path, "r", encoding="utf-8") as f:
-                    page_registry = json.load(f)
-                page_entry = next((p for p in page_registry if p.get("textbook_id") == textbook_id and p.get("page_number") == page_numbers[0]), None)
-                if page_entry:
-                    source_hash = page_entry.get("content_hash", source_hash)
-
-            # Get verification status from authority registry
-            if authority_registry_path.exists():
-                with open(authority_registry_path, "r", encoding="utf-8") as f:
-                    auth_registry = json.load(f)
-                auth_books = auth_registry.get("textbooks", [])
-                auth_book = next((b for b in auth_books if b.get("textbook_id") == textbook_id), None)
-                if auth_book:
-                    verification_status = "VERIFIED"
-                else:
-                    verification_status = "UNVERIFIED"
-
-            # Compute hashes
-            retrieval_hash = hashlib.sha256(f"retrieval::{concept_id}::{retrieval_confidence}".encode("utf-8")).hexdigest()
-            lineage_str = f"{textbook_id}::{edition}::{chapter}::{section}::{page_numbers}"
-            lineage_hash = hashlib.sha256(lineage_str.encode("utf-8")).hexdigest()
-
-        except Exception as e:
-            pass
-
-        return {
-            "evidence_id": evidence_id,
-            "textbook_id": textbook_id,
-            "edition": edition,
-            "chapter": chapter,
-            "section": section,
-            "page_numbers": page_numbers,
-            "source_hash": source_hash,
-            "retrieval_hash": retrieval_hash,
-            "lineage_hash": lineage_hash,
-            "verification_status": verification_status
-        }
+    def _resolve_evidence(
+        self,
+        curriculum_intelligence: Dict[str, Any],
+        retrieval_confidence: float,
+        pre_built_evidence: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Returns the evidence handle already injected by the retrieval engine.
+        Falls back to registry lookup only if the handle is absent (e.g. no-match path).
+        """
+        if pre_built_evidence:
+            return pre_built_evidence
+        raise ValueError("[SAFETY_GATE] Evidence failure: retrieval did not provide an evidence handle.")
 
     def _bind_contract(
         self,
@@ -346,7 +420,9 @@ class CanonicalRuntime:
         total_latency_ms: float,
     ) -> Dict[str, Any]:
         """Bind all stage outputs into the canonical runtime contract."""
-        evidence = self._resolve_evidence(curriculum_intelligence, retrieval_confidence)
+        # Pass the pre-built evidence handle from retrieval (injected via evidence_first_retrieval)
+        pre_built = curriculum_intelligence.get("evidence")
+        evidence = self._resolve_evidence(curriculum_intelligence, retrieval_confidence, pre_built_evidence=pre_built)
         return {
             "request_id":            request_id,
             "timestamp":             datetime.now(timezone.utc).isoformat(),

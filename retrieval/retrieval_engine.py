@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+import importlib.util
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -13,15 +14,33 @@ if str(ROOT) not in sys.path:
 
 from backend.memory.constitutional_semantic_memory import stable_hash
 
-MASTERDB_PATH = ROOT / "masterdb" / "balbharti" / "sample_ingestion_dataset.json"
+# Canonical dataset — synthetic records are excluded from this path
+MASTERDB_PATH = ROOT / "masterdb" / "balbharti" / "canonical_dataset.json"
+EVIDENCE_FIRST_RETRIEVAL_PATH = ROOT / "retrieval" / "evidence_first_retrieval.py"
+
+
+def _load_evidence_builder():
+    spec = importlib.util.spec_from_file_location(
+        "_uniguru_evidence_first_retrieval",
+        str(EVIDENCE_FIRST_RETRIEVAL_PATH),
+    )
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Unable to load evidence builder from {EVIDENCE_FIRST_RETRIEVAL_PATH}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module.build_evidence_handle
+
+
+build_evidence_handle = _load_evidence_builder()
 
 
 def _normalize(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", " ", str(text or "").lower()).strip()
 
 
-def _tokens(text: str) -> set[str]:
-    tokens: set[str] = set()
+def _tokens(text: str) -> set:
+    tokens: set = set()
     for token in _normalize(text).split():
         if not token:
             continue
@@ -95,7 +114,9 @@ def _related_score(record: Dict[str, Any], reference: Dict[str, Any]) -> float:
         score += 0.1
     if abs(int(record.get("grade") or 0) - int(reference.get("grade") or 0)) == 1:
         score += 0.12
-    score += len(_tokens(str(record.get("concept")) or "") & _tokens(str(reference.get("concept")) or "")) * 0.02
+    score += len(
+        _tokens(str(record.get("concept") or "")) & _tokens(str(reference.get("concept") or ""))
+    ) * 0.02
     return round(min(score, 1.0), 4)
 
 
@@ -105,13 +126,11 @@ def build_curriculum_graph(records: List[Dict[str, Any]]) -> Dict[str, Any]:
 
     nodes: List[Dict[str, Any]] = []
     edges: List[Dict[str, Any]] = []
-    groups: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
 
     for record in records:
-        node_id = record.get("record_id")
         nodes.append(
             {
-                "id": node_id,
+                "id": record.get("record_id"),
                 "concept": record.get("concept"),
                 "chapter": record.get("chapter"),
                 "subject": record.get("subject"),
@@ -121,14 +140,15 @@ def build_curriculum_graph(records: List[Dict[str, Any]]) -> Dict[str, Any]:
                 "learning_outcome": record.get("learning_outcome"),
             }
         )
-        groups[f"{record.get('subject')}|{record.get('grade')}"] .append(record)
 
     subject_records: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
     for record in records:
         subject_records[record.get("subject")].append(record)
 
     for subject, rows in subject_records.items():
-        ordered = sorted(rows, key=lambda row: (int(row.get("grade") or 0), str(row.get("chapter") or "")))
+        ordered = sorted(
+            rows, key=lambda row: (int(row.get("grade") or 0), str(row.get("chapter") or ""))
+        )
         for previous, current in zip(ordered, ordered[1:]):
             if previous.get("grade") and current.get("grade"):
                 edges.append(
@@ -144,7 +164,10 @@ def build_curriculum_graph(records: List[Dict[str, Any]]) -> Dict[str, Any]:
         for candidate in records:
             if record is candidate:
                 continue
-            if record.get("chapter") == candidate.get("chapter") and record.get("record_id") != candidate.get("record_id"):
+            if (
+                record.get("chapter") == candidate.get("chapter")
+                and record.get("record_id") != candidate.get("record_id")
+            ):
                 edges.append(
                     {
                         "from": record.get("record_id"),
@@ -190,6 +213,7 @@ def find_top_matches(
     scored.sort(key=lambda row: row["score"], reverse=True)
     matches = scored[:max_results]
     best_record = matches[0]["record"] if matches else None
+
     related_records = (
         sorted(
             [
@@ -208,8 +232,20 @@ def find_top_matches(
     )
     related_records = [row["record"] for row in related_records if row["score"] > 0]
 
+    # Inject immutable evidence handles into every matched record
+    for item in matches:
+        rec = item["record"]
+        rec["evidence"] = build_evidence_handle(rec, query, item["score"]).to_dict()
+
+    if best_record:
+        confidence = min(matches[0]["score"], 1.0) if matches else 0.0
+        best_record["evidence"] = build_evidence_handle(best_record, query, confidence).to_dict()
+
+    for rec in related_records:
+        rec["evidence"] = build_evidence_handle(rec, query, 0.5).to_dict()
+
     curriculum_graph = build_curriculum_graph(records)
-    chapter_recommendations = []
+    chapter_recommendations: List[Any] = []
     if best_record:
         chapter_recommendations = [best_record.get("chapter")]
         for candidate in related_records:
@@ -246,8 +282,10 @@ def generate_retrieval_artifact(
 ) -> Dict[str, Any]:
     retrieval = retrieve_from_masterdb(query=query, grade=grade, medium=medium, subject=subject)
     record = retrieval.get("best_record") or {}
-    artifact = {
-        "trace_id": stable_hash({"query": query, "grade": grade, "medium": medium, "subject": subject})[:16],
+    return {
+        "trace_id": stable_hash(
+            {"query": query, "grade": grade, "medium": medium, "subject": subject}
+        )[:16],
         "query": query,
         "grade": grade,
         "medium": medium,
@@ -258,6 +296,7 @@ def generate_retrieval_artifact(
         "version": record.get("version"),
         "knowledge_hash": stable_hash(record) if record else None,
         "source_lineage": record.get("source_lineage"),
+        "evidence": record.get("evidence"),
         "confidence_state": {
             "confidence": retrieval.get("confidence", 0.0),
             "matched_chapter": record.get("chapter"),
@@ -270,4 +309,3 @@ def generate_retrieval_artifact(
         "retrieval_hash": retrieval.get("retrieval_hash"),
         "dataset_path": retrieval.get("dataset_path"),
     }
-    return artifact
