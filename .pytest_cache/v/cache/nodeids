@@ -110,5 +110,6 @@
   "tests/test_curriculum_truth_validation.py::test_39_synthetic_audit_reports_synthetic_records_count",
   "tests/test_curriculum_truth_validation.py::test_40_synthetic_audit_scanned_expected_files",
   "tests/test_curriculum_truth_validation.py::test_41_all_registered_concepts_have_matching_textbook",
-  "tests/test_curriculum_truth_validation.py::test_42_no_silent_synthetic_content_in_registries"
+  "tests/test_curriculum_truth_validation.py::test_42_no_silent_synthetic_content_in_registries",
+  "tests/test_educational_adaptation.py::test_student_misconception_adaptation_loop"
 ]

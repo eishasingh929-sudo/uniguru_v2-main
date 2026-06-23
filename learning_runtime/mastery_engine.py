@@ -204,13 +204,20 @@ def _priority_from_score(score: float) -> str:
 def generate_remediation_routing(
     weak_areas: List[Dict[str, Any]],
     graph: Optional[Dict[str, Any]] = None,
+    active_misconceptions: Optional[List[Dict[str, Any]]] = None,
 ) -> List[Dict[str, Any]]:
     """
     For each weak area, generate a remediation recommendation that is
-    aware of prerequisite dependencies.
+    aware of prerequisite dependencies and active misconceptions.
     """
     if graph is None:
         graph = _load_pedagogical_graph()
+
+    active_misconceptions = active_misconceptions or []
+    misconceptions_by_concept = {}
+    for m in active_misconceptions:
+        if m.get("status") == "ACTIVE":
+            misconceptions_by_concept.setdefault(m["concept_id"], []).append(m)
 
     remediations = []
     for weak in weak_areas:
@@ -222,6 +229,22 @@ def generate_remediation_routing(
         actions = _remediation_actions(score, prereqs)
         est_hours = REMEDIATION_HOURS.get(priority, 1.5)
         success_prob = round(min(0.95, 0.55 + score * 0.5), 3)
+
+        concept_misconceptions = misconceptions_by_concept.get(concept_id, [])
+        for m in concept_misconceptions:
+            m_name = m["misconception_name"]
+            if m_name == "PLACE_VALUE_REVERSAL":
+                actions.insert(0, "Bridge misconception 'Place Value Reversal' by reviewing prerequisite concept 'Number Recognition' with concrete base-10 blocks.")
+            elif m_name == "COUNTING_OFF_BY_ONE":
+                actions.insert(0, "Bridge misconception 'Off-by-one Counting' by reviewing foundational concept 'Number Sequence' with a visual number line.")
+            elif m_name == "ADDITION_NO_CARRY":
+                actions.insert(0, "Bridge misconception 'Forget-to-carry Addition' by reviewing foundational concept 'Place Value' to reinforce regrouping.")
+            else:
+                actions.insert(0, f"Address detected error pattern: {m['error_pattern']}.")
+
+        if concept_misconceptions:
+            est_hours = round(est_hours + 1.0, 1)
+            success_prob = round(max(0.2, success_prob - 0.25), 3)
 
         remediations.append({
             "concept_id":                concept_id,
@@ -343,6 +366,7 @@ class MasteryEngine:
         # concept_id -> { attempts, correct, confidence_scores, time_seconds }
         self._concept_data: Dict[str, Dict[str, Any]] = {}
         self._exercise_log: List[Dict[str, Any]] = []
+        self._misconceptions: Dict[str, Dict[str, Any]] = {}
 
     def record_exercise(
         self,
@@ -352,6 +376,7 @@ class MasteryEngine:
         time_seconds: int = 60,
         exercise_id: Optional[str] = None,
         difficulty_level: str = "BASIC",
+        error_pattern: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Record a single exercise result and return updated concept mastery."""
         if concept_id not in self._concept_data:
@@ -369,6 +394,11 @@ class MasteryEngine:
         cd["attempts"] += 1
         if correct:
             cd["correct_attempts"] += 1
+            self._resolve_misconceptions(concept_id)
+        else:
+            if error_pattern:
+                self._record_misconception(concept_id, error_pattern)
+
         cd["confidence_scores"].append(round(max(0.0, min(1.0, confidence)), 4))
         cd["time_seconds"].append(max(1, time_seconds))
         cd["last_attempted"] = datetime.now(timezone.utc).isoformat()
@@ -395,9 +425,48 @@ class MasteryEngine:
             "confidence_self_report": confidence,
             "accuracy":            accuracy,
             "efficiency_score":    eff,
+            "error_pattern":       error_pattern,
         })
 
         return result
+
+    def _record_misconception(self, concept_id: str, error_pattern: str) -> None:
+        key = f"{concept_id}::{error_pattern}"
+        if key not in self._misconceptions:
+            misconception_name = "GENERIC_GAP"
+            description = "General misunderstanding of the concept."
+            if concept_id == "CONCEPT_PLACE_VALUE" and error_pattern == "digit_reversal":
+                misconception_name = "PLACE_VALUE_REVERSAL"
+                description = "Reverses tens and ones or treats digit positions as simple counts."
+            elif concept_id == "CONCEPT_COUNTING" and error_pattern == "off_by_one":
+                misconception_name = "COUNTING_OFF_BY_ONE"
+                description = "Student miscounts the cardinality of objects by +/- 1."
+            elif concept_id == "CONCEPT_ADDITION_BASIC" and error_pattern == "no_carry":
+                misconception_name = "ADDITION_NO_CARRY"
+                description = "Student adds digits column-wise without regrouping or carrying over."
+
+            self._misconceptions[key] = {
+                "concept_id": concept_id,
+                "error_pattern": error_pattern,
+                "misconception_name": misconception_name,
+                "description": description,
+                "occurrences": 0,
+                "status": "DETECTED",
+                "severity": "LOW",
+                "detected_at": datetime.now(timezone.utc).isoformat(),
+            }
+
+        m = self._misconceptions[key]
+        m["occurrences"] += 1
+        if m["occurrences"] >= 2:
+            m["status"] = "ACTIVE"
+            m["severity"] = "HIGH"
+
+    def _resolve_misconceptions(self, concept_id: str) -> None:
+        for key, m in self._misconceptions.items():
+            if m["concept_id"] == concept_id and m["status"] == "ACTIVE":
+                m["status"] = "RESOLVED"
+                m["resolved_at"] = datetime.now(timezone.utc).isoformat()
 
     def build_progress_state(
         self, total_curriculum_concepts: int = 20
@@ -416,7 +485,8 @@ class MasteryEngine:
             concept_metrics[cid] = metrics
 
         weak_areas = detect_weak_areas(concept_metrics)
-        remediations = generate_remediation_routing(weak_areas, self.graph)
+        misconceptions_list = list(self._misconceptions.values())
+        remediations = generate_remediation_routing(weak_areas, self.graph, misconceptions_list)
 
         strengths = [
             cid for cid, m in concept_metrics.items()
@@ -470,6 +540,7 @@ class MasteryEngine:
             "learning_velocity":       velocity,
             "recommended_next_steps":  next_steps,
             "estimated_time_to_grade_mastery": progress_estimate,
+            "misconceptions":          misconceptions_list,
             # ── additional intelligence ──
             "learning_progress_state": {
                 "per_concept_mastery": concept_metrics,

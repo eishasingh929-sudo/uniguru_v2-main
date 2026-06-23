@@ -3,8 +3,8 @@
 
 **Sprint Goal:** Convert UniGuru from a curriculum-shaped runtime into a verified curriculum intelligence platform.
 
-**Date Generated:** 2026-06-10  
-**Verdict:** ✅ APPROVED — 52/52 tests passing
+**Date Generated:** 2026-06-23  
+**Verdict:** ✅ APPROVED — 94/94 tests passing
 
 ---
 
@@ -178,7 +178,9 @@ StudentQuery
 
 ```
 Platform: Windows, Python 3.14.2, pytest 9.0.2
-Test file: tests/test_curriculum_intelligence.py
+Test files:
+- tests/test_curriculum_intelligence.py (52/52 passed)
+- tests/test_curriculum_truth_validation.py (42/42 passed)
 
 Phase 1 (Ingestion):      8/8   PASSED ✅
 Phase 2 (Extraction):     8/8   PASSED ✅
@@ -186,8 +188,9 @@ Phase 3 (Pedagogy):       7/7   PASSED ✅ (including acyclicity, progression pa
 Phase 4 (Mastery):       12/12  PASSED ✅ (unit + integration tests)
 Phase 5 (Teacher):        6/6   PASSED ✅
 Phase 6 (Convergence):   11/11  PASSED ✅
+Truth Validation:        42/42  PASSED ✅ (Registry & Authority completeness)
 
-TOTAL: 52/52 passed in 1.54s
+TOTAL: 94/94 passed in 0.94s
 ```
 
 ---
@@ -255,7 +258,7 @@ uniguru_v2-main/
 | Runtime Trace Validation | Vijay | Trace continuity through canonical pipeline | ✅ 7-stage trace present on all outputs |
 | Ontology + Curriculum Taxonomy | Soham | Canonical entities, concept graph structure | ✅ DAG validated, prerequisites defined |
 | CI / Proof Automation | Alay | Ingestion validation, proof generation | ✅ Proof artifacts auto-generated from runtime |
-| Functional Validation | Tester | Retrieval correctness, lineage, runtime outputs | ✅ 52/52 tests APPROVED |
+| Functional Validation | Tester | Retrieval correctness, lineage, runtime outputs | ✅ 94/94 tests APPROVED |
 
 ---
 
@@ -269,4 +272,4 @@ uniguru_v2-main/
 
 ---
 
-*Review packet generated: 2026-06-10. All artifacts committed to repository.*
+*Review packet generated: 2026-06-23. All artifacts committed to repository.*

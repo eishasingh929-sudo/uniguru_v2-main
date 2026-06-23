@@ -1,7 +1,7 @@
 {
   "graph_id": "UNIGURU_CURRICULUM_KNOWLEDGE_GRAPH_V2",
   "schema_version": "2.0.0",
-  "generated_at": "2026-06-22T07:13:18.574502+00:00",
+  "generated_at": "2026-06-23T12:27:35.605387+00:00",
   "node_types": [
     "publisher",
     "board",
