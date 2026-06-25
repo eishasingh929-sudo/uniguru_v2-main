@@ -272,4 +272,26 @@ uniguru_v2-main/
 
 ---
 
+## Production Expansion Sprint Control
+
+**Date Generated:** 2026-06-25
+
+The AI-normalized Balbharti expansion brief is now represented as an executable in-repo sprint control layer. This layer does not add synthetic curriculum and does not certify absent licensed textbooks.
+
+| Deliverable | Location | Status |
+|-------------|----------|--------|
+| Assigned textbook manifest | `curriculum/production_expansion/assigned_textbooks_manifest.json` | Generated from current verified authority registry |
+| Licensed textbook drop hierarchy | `masterdb/balbharti/licensed_textbooks/README.md` | Ready for confidential licensed assets |
+| Production expansion gate report | `curriculum/production_expansion/production_expansion_report.json` | Current canonical snapshot certified; new expansion blocked pending assigned downloads |
+| Vijay cross-validation report | `curriculum/production_expansion/vijay_cross_validation_report.json` | Blocked pending declared Vijay assignments |
+| Sprint validator | `scripts/production_expansion_sprint.py` | Executable |
+
+**Current production result:** `CERTIFIED_CURRENT_CANONICAL_SNAPSHOT`
+
+**Current expansion result:** `BLOCKED_PENDING_ASSIGNED_LICENSED_TEXTBOOK_DOWNLOADS`
+
+**Reason:** No newly assigned licensed textbook binaries, Samachar extraction output, or Vijay-owned assignment set is present in this checkout. The production gate intentionally blocks any new curriculum merge until textbook evidence and independent cross-validation are available.
+
+---
+
 *Review packet generated: 2026-06-23. All artifacts committed to repository.*

@@ -73,7 +73,7 @@
       "trace_id": "constitutional_contradiction_injection"
     }
   ],
-  "event_count": 5,
+  "event_count": 7,
   "lineage": [
     {
       "classification": "transient",
@@ -114,15 +114,31 @@
       "previous_event_hash": "96cdac46b61e4d8f9bb074e96d174d057ae2c5d43fae099df836662b9cb11980",
       "retrieval_truth_hash": null,
       "trace_id": "constitutional_poisoning_attempt"
+    },
+    {
+      "classification": "transient",
+      "event_hash": "a9d7bad7c5aee26c486175f443a898b6733760581d6fa0ed4e34b9bf506802cc",
+      "interpretation_hash": "3643bd567bcd9f9c4795bfe11f1f5059bc6c9714e17cba8db2d4acc0d6ed27ae",
+      "previous_event_hash": "53fa6dab62136ae066fb9b00e43c7799b9ab97f12213c26b22457da6e997437d",
+      "retrieval_truth_hash": "1bae4b90d0481733a07561e6d76b972a3c2a50993e55925b1dab9ef11bea9753",
+      "trace_id": "mitra-local-new-query-001"
+    },
+    {
+      "classification": "transient",
+      "event_hash": "7c1abe70b1c21b072dbf8fdb14fb39f150dd1875f61c81c115044e0972ecf7df",
+      "interpretation_hash": "27c1a8800546ae9811f2f19d24702e93bf3f03d91704acabe5b14745dd24d789",
+      "previous_event_hash": "a9d7bad7c5aee26c486175f443a898b6733760581d6fa0ed4e34b9bf506802cc",
+      "retrieval_truth_hash": "d6ab20203e1fadc990e24d3aab90f78ac8392d4870fbe57985da3215dad6507b",
+      "trace_id": "mitra-live-new-query-001"
     }
   ],
   "replay_integrity": {
     "hash_chain_ok": true,
-    "last_event_hash": "53fa6dab62136ae066fb9b00e43c7799b9ab97f12213c26b22457da6e997437d",
+    "last_event_hash": "7c1abe70b1c21b072dbf8fdb14fb39f150dd1875f61c81c115044e0972ecf7df",
     "rollback_target": null
   },
   "schema": "UNIGURU_CONSTITUTIONAL_SEMANTIC_RECONSTRUCTION_V1",
-  "state_hash": "9cd2c4c4150735eb20d6655303a76431d1d462fe41a560f509810db1dec69ffa",
+  "state_hash": "b3ae761748f3b566855c223c43277c6737a27b92353c42ca12eeb6a6c8b4c410",
   "transient_memory": [
     {
       "classification": "transient",
@@ -161,6 +177,26 @@
         "interpretation_does_not_reference_retrieval_truth"
       ],
       "trace_id": "constitutional_poisoning_attempt"
+    },
+    {
+      "classification": "transient",
+      "event_hash": "a9d7bad7c5aee26c486175f443a898b6733760581d6fa0ed4e34b9bf506802cc",
+      "reasons": [
+        "verification_status_not_verified",
+        "no_accepted_signals",
+        "confidence_below_canonical_floor"
+      ],
+      "trace_id": "mitra-local-new-query-001"
+    },
+    {
+      "classification": "transient",
+      "event_hash": "7c1abe70b1c21b072dbf8fdb14fb39f150dd1875f61c81c115044e0972ecf7df",
+      "reasons": [
+        "verification_status_not_verified",
+        "no_accepted_signals",
+        "confidence_below_canonical_floor"
+      ],
+      "trace_id": "mitra-live-new-query-001"
     }
   ]
 }

@@ -655,5 +655,23 @@
         "confidence": 0.6858912706375122,
         "system_path": "/new_query_6phase_pipeline",
         "timestamp": "2026-04-30T11:38:37.957566+00:00"
+    },
+    {
+        "event_id": "mitra-local-new-query-001",
+        "query": "What is the significance of the Bhagavad Gita?",
+        "signals_used": 0,
+        "final_answer": "I do not have verified knowledge to answer this question.",
+        "confidence": 0.0,
+        "system_path": "/new_query_6phase_pipeline",
+        "timestamp": "2026-06-25T08:51:46.140721+00:00"
+    },
+    {
+        "event_id": "mitra-live-new-query-001",
+        "query": "What is the significance of the Bhagavad Gita?",
+        "signals_used": 0,
+        "final_answer": "I do not have verified knowledge to answer this question.",
+        "confidence": 0.0,
+        "system_path": "/new_query_6phase_pipeline",
+        "timestamp": "2026-06-25T09:00:51.033264+00:00"
     }
 ]

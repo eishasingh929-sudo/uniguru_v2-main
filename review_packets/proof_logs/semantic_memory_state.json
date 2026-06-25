@@ -525,6 +525,30 @@
       "unresolved_thread_opened": true,
       "updated_at": "2026-05-13T14:06:48.339285Z",
       "user_id": "constitutional-demo-user"
+    },
+    {
+      "canonical_authority_granted": false,
+      "constitutional_event_hash": "a9d7bad7c5aee26c486175f443a898b6733760581d6fa0ed4e34b9bf506802cc",
+      "contradiction_pressure": 0.0,
+      "entities_touched": [],
+      "event": "semantic_memory_update",
+      "memory_classification": "transient",
+      "trace_id": "mitra-local-new-query-001",
+      "unresolved_thread_opened": true,
+      "updated_at": "2026-06-25T08:51:46.131236Z",
+      "user_id": "mitra-local-smoke-001"
+    },
+    {
+      "canonical_authority_granted": false,
+      "constitutional_event_hash": "7c1abe70b1c21b072dbf8fdb14fb39f150dd1875f61c81c115044e0972ecf7df",
+      "contradiction_pressure": 0.0,
+      "entities_touched": [],
+      "event": "semantic_memory_update",
+      "memory_classification": "transient",
+      "trace_id": "mitra-live-new-query-001",
+      "unresolved_thread_opened": true,
+      "updated_at": "2026-06-25T09:00:51.004013Z",
+      "user_id": "mitra-live-smoke"
     }
   ],
   "schema": "UNIGURU_SEMANTIC_MEMORY_V1",
@@ -719,6 +743,26 @@
       "user_id": "constitutional-demo-user",
       "verification_status": "NO_VERIFIED_KNOWLEDGE"
     },
+    "mitra-live-smoke:mitra-live-new-query-001": {
+      "contradiction_pressure": 0.0,
+      "query": "What is the significance of the Bhagavad Gita?",
+      "rejected_signal_count": 12,
+      "state": "open",
+      "trace_id": "mitra-live-new-query-001",
+      "updated_at": "2026-06-25T09:00:51.004013Z",
+      "user_id": "mitra-live-smoke",
+      "verification_status": "NO_VERIFIED_KNOWLEDGE"
+    },
+    "mitra-local-smoke-001:mitra-local-new-query-001": {
+      "contradiction_pressure": 0.0,
+      "query": "What is the significance of the Bhagavad Gita?",
+      "rejected_signal_count": 12,
+      "state": "open",
+      "trace_id": "mitra-local-new-query-001",
+      "updated_at": "2026-06-25T08:51:46.131236Z",
+      "user_id": "mitra-local-smoke-001",
+      "verification_status": "NO_VERIFIED_KNOWLEDGE"
+    },
     "tantra-demo-user:tantra_contradiction_governance": {
       "contradiction_pressure": 0.0,
       "query": "Explain dharma and rajadharma for governance",
@@ -770,7 +814,7 @@
       "verification_status": "NO_VERIFIED_KNOWLEDGE"
     }
   },
-  "updated_at": "2026-05-13T14:06:48.339285Z",
+  "updated_at": "2026-06-25T09:00:51.004013Z",
   "users": {
     "anonymous": {
       "continuity_score": 0.9,
@@ -803,6 +847,22 @@
         "constitutional_replay_qubit",
         "constitutional_lineage_vishnu",
         "constitutional_transient_governance"
+      ]
+    },
+    "mitra-live-smoke": {
+      "continuity_score": 0.15,
+      "last_seen": "2026-06-25T09:00:51.004013Z",
+      "queries": 1,
+      "trace_ids": [
+        "mitra-live-new-query-001"
+      ]
+    },
+    "mitra-local-smoke-001": {
+      "continuity_score": 0.15,
+      "last_seen": "2026-06-25T08:51:46.131236Z",
+      "queries": 1,
+      "trace_ids": [
+        "mitra-local-new-query-001"
       ]
     },
     "tantra-demo-user": {

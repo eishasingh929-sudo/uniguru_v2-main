@@ -8,13 +8,21 @@ import logging
 import os
 from typing import Dict, Any, Optional
 
-from supabase import create_client, Client
-from passlib.context import CryptContext
+try:
+    from supabase import create_client, Client
+except ImportError:  # pragma: no cover - exercised only in slim/no-auth runtimes
+    create_client = None
+    Client = Any  # type: ignore[misc, assignment]
+
+try:
+    from passlib.context import CryptContext
+except ImportError:  # pragma: no cover - exercised only in slim/no-auth runtimes
+    CryptContext = None  # type: ignore[assignment]
 
 logger = logging.getLogger("uniguru.service.supabase_auth")
 
 # Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto") if CryptContext else None
 
 
 class SupabaseAuthService:
@@ -23,7 +31,7 @@ class SupabaseAuthService:
     def __init__(self):
         self.supabase_url = os.getenv("SUPABASE_URL", "")
         self.supabase_key = os.getenv("SUPABASE_ANON_KEY", "")
-        self.enabled = bool(self.supabase_url and self.supabase_key)
+        self.enabled = bool(create_client and self.supabase_url and self.supabase_key)
         
         if self.enabled:
             try:
@@ -35,7 +43,10 @@ class SupabaseAuthService:
                 self.client = None
         else:
             self.client = None
-            logger.warning("Supabase not configured (missing SUPABASE_URL or SUPABASE_ANON_KEY)")
+            if create_client is None:
+                logger.warning("Supabase package unavailable; Supabase authentication disabled")
+            else:
+                logger.warning("Supabase not configured (missing SUPABASE_URL or SUPABASE_ANON_KEY)")
     
     def signup_with_email(self, email: str, password: str, name: str) -> Dict[str, Any]:
         """Sign up a new user with email and password."""

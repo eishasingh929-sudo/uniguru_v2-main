@@ -1,0 +1,19 @@
+{
+  "codex_textbooks_ready_for_vijay_review": true,
+  "cross_validation_required_before_production_merge": true,
+  "generated_at": "2026-06-25T08:36:16.937510+00:00",
+  "integration_owner": "Vijay",
+  "production_merge_status": "BLOCKED_PENDING_VIJAY_ASSIGNMENTS",
+  "report_hash": "9d34acb3dc2097c5145291ec4ed132b417964b84183105bac0d23e42a39412fb",
+  "review_scope": [
+    "extraction_quality",
+    "evidence_accuracy",
+    "lineage",
+    "knowledge_graph_relationships",
+    "educational_correctness",
+    "runtime_compatibility"
+  ],
+  "schema": "UNIGURU_VIJAY_CROSS_VALIDATION_REPORT_V1",
+  "vijay_assignments": [],
+  "vijay_assignments_declared": 0
+}
