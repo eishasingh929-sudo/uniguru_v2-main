@@ -36,6 +36,14 @@ from service.guru_models import Guru, CreateGuruRequest, guru_storage
 from service.supabase_auth import supabase_auth
 from stt import STTEngine, STTUnavailableError
 
+# Production observability — structured logging + extended metrics
+try:
+    from observability.structured_logger import StructuredLogger as _StructuredLogger
+    from observability.metrics_collector import MetricsCollector as _MetricsCollector
+    _OBS_AVAILABLE = True
+except ImportError:
+    _OBS_AVAILABLE = False
+
 
 _LOG_LEVEL = os.getenv("UNIGURU_LOG_LEVEL", "INFO").upper()
 logging.basicConfig(level=getattr(logging, _LOG_LEVEL, logging.INFO))
@@ -168,6 +176,10 @@ _METRICS = {
     "ask_route_total": defaultdict(int),
     "queue_rejected_total": 0,
 }
+
+# Initialize extended observability singletons (graceful if unavailable)
+_structured_logger = _StructuredLogger.get_instance() if _OBS_AVAILABLE else None
+_metrics_collector = _MetricsCollector.get_instance() if _OBS_AVAILABLE else None
 
 
 def _utc_now_iso() -> str:
@@ -467,7 +479,13 @@ def _is_rate_limited(client_id: str) -> bool:
     return False
 
 
-def _record_ask_metrics(decision: str, verification_status: str, latency_ms: float) -> None:
+def _record_ask_metrics(
+    decision: str,
+    verification_status: str,
+    latency_ms: float,
+    confidence: Optional[float] = None,
+    route: str = "/ask",
+) -> None:
     now = time.time()
     with _METRICS_LOCK:
         _METRICS["requests_ask_total"] += 1
@@ -479,6 +497,13 @@ def _record_ask_metrics(decision: str, verification_status: str, latency_ms: flo
         while _ASK_REQUEST_TIMESTAMPS and _ASK_REQUEST_TIMESTAMPS[0] < floor:
             _ASK_REQUEST_TIMESTAMPS.popleft()
     _save_metrics_snapshot()
+    # Extended observability: record to rolling-window histogram collector
+    if _metrics_collector is not None:
+        _metrics_collector.record_request_latency(latency_ms, route=route)
+        if confidence is not None:
+            _metrics_collector.record_confidence(confidence)
+        if verification_status in {"NO_VERIFIED_KNOWLEDGE", "UNVERIFIED"}:
+            _metrics_collector.record_failure("no_knowledge")
 
 
 def _record_route_metric(route: str) -> None:
@@ -608,7 +633,14 @@ def _process_router_request(
         routing=response.get("routing"),
         decision=decision,
     )
-    _record_ask_metrics(decision=decision, verification_status=verification_status, latency_ms=latency_ms)
+    _confidence = float(response.get("confidence_breakdown", {}).get("overall") or response.get("confidence") or 0.0) if isinstance(response.get("confidence_breakdown"), dict) else None
+    _record_ask_metrics(
+        decision=decision,
+        verification_status=verification_status,
+        latency_ms=latency_ms,
+        confidence=_confidence,
+        route="/ask",
+    )
     _record_route_metric(route=route)
     _log_event(
         event="request_processed",
@@ -675,6 +707,31 @@ async def observability_and_throttle(request: Request, call_next):
         _METRICS["requests_total"] += 1
         _METRICS["requests_by_status"][str(response.status_code)] += 1
     _save_metrics_snapshot()
+
+    # Emit structured log entry for every request
+    if _structured_logger is not None:
+        try:
+            _request_id = str(uuid.uuid4())
+            _error_class = None
+            if response.status_code >= 500:
+                _error_class = "internal_error"
+            elif response.status_code == 429:
+                _error_class = "rate_limited"
+            elif response.status_code == 401:
+                _error_class = "auth_failure"
+            elif response.status_code == 422:
+                _error_class = "invalid_request"
+            _structured_logger.log_request(
+                request_id=_request_id,
+                route=request.url.path,
+                method=request.method,
+                latency_ms=round(latency_ms, 3),
+                status_code=response.status_code,
+                error_class=_error_class,
+                session_id=request.headers.get("X-Session-Id"),
+            )
+        except Exception:
+            pass  # Never let observability break request handling
 
     response.headers["X-RateLimit-Limit"] = str(_RATE_LIMIT_MAX_REQUESTS)
     response.headers["X-RateLimit-Window-Seconds"] = str(_RATE_LIMIT_WINDOW_SECONDS)
@@ -946,6 +1003,12 @@ def metrics(request: Request) -> PlainTextResponse:
     lines.append("# TYPE uniguru_ask_route_total counter")
     for route, count in sorted(by_route.items()):
         lines.append(f'uniguru_ask_route_total{{route="{route}"}} {count}')
+    # Append extended histogram metrics from the rolling-window collector
+    if _metrics_collector is not None:
+        try:
+            lines.extend(_metrics_collector.to_prometheus_lines())
+        except Exception:
+            pass
     return PlainTextResponse("\n".join(lines) + "\n")
 
 
@@ -963,7 +1026,37 @@ def metrics_reset(request: Request) -> Dict[str, Any]:
         event="metrics_reset",
         payload={"request_id": str(uuid.uuid4()), "caller_name": request.headers.get("X-Caller-Name", "unknown")},
     )
+    if _metrics_collector is not None:
+        _metrics_collector.reset()
     return {"status": "ok", "message": "metrics reset complete"}
+
+
+@app.get(
+    "/observability/sample",
+    tags=["Monitoring"],
+    summary="Recent Structured Logs",
+    description="Return the last 10 structured log entries from the JSON log file (admin only)"
+)
+def observability_sample(request: Request) -> Dict[str, Any]:
+    _enforce_service_auth(request)
+    entries = []
+    if _structured_logger is not None:
+        try:
+            entries = _structured_logger.get_recent_entries(n=10)
+        except Exception:
+            pass
+    collector_snapshot = {}
+    if _metrics_collector is not None:
+        try:
+            collector_snapshot = _metrics_collector.get_snapshot()
+        except Exception:
+            pass
+    return {
+        "status": "ok",
+        "service": "uniguru-live-reasoning",
+        "sample_log_entries": entries,
+        "extended_metrics_snapshot": collector_snapshot,
+    }
 
 
 @app.get(

@@ -27,7 +27,7 @@
       "memory_classification": "transient",
       "trace_id": "constitutional_transient_governance",
       "unresolved_thread_opened": true,
-      "updated_at": "2026-05-13T14:06:48.240935Z",
+      "updated_at": "2026-06-29T07:39:45.725899Z",
       "user_id": "constitutional-demo-user"
     },
     "rejected_signals": [
@@ -46,7 +46,7 @@
     ],
     "retrieval_truth_hash": "aedcce58b44f895af19cdf19b3b7335c5b2c1943c04801578e0e3e490161813c",
     "semantic_path": [],
-    "timestamp": "2026-05-13T14:06:48.115709Z",
+    "timestamp": "2026-06-29T07:39:45.628017Z",
     "trace_continuity": {
       "bucket_proof": "constitutional_transient_governance",
       "contract_emission": "constitutional_transient_governance",
@@ -176,7 +176,7 @@
     "valid_entries": 12
   },
   "fallback_to_llm": false,
-  "generated_at": "2026-05-13T14:06:48.115709Z",
+  "generated_at": "2026-06-29T07:39:45.628017Z",
   "interpretation_payload": {
     "answer": "I do not have verified knowledge to answer this question.",
     "artifact_hash": "039d35e4f474c668a6f1fc45dbb5d84092cd05f91dc58d9da764441d3c56f680",
@@ -1972,7 +1972,7 @@
       ],
       "method": "canonical_text_entity"
     },
-    "generated_at": "2026-05-13T14:06:48.115709Z",
+    "generated_at": "2026-06-29T07:39:45.628017Z",
     "immutable": true,
     "layer": "DETERMINISTIC_RETRIEVAL_TRUTH",
     "mutation_policy": "READ_ONLY_FOR_INTERPRETATION_LAYER",
@@ -3529,13 +3529,20 @@
     "constitutional_governance": {
       "canonical_authority_granted": false,
       "canonical_memory_keys": [
+        "Atman",
         "Bhagavata Purana",
+        "Brahma",
+        "Brahman",
         "Narada Purana",
         "Narayana",
-        "Padma Purana"
+        "Padma Purana",
+        "Taittiriya Upanishad",
+        "Upanishads",
+        "Vedas",
+        "Yoga"
       ],
       "checkpoint_path": "C:/Users/Yass0/OneDrive/Desktop/uniguru_3/uniguru_v2-main/review_packets/proof_logs/constitutional_semantic_checkpoint.json",
-      "contradiction_event_count": 0,
+      "contradiction_event_count": 1,
       "event": {
         "canonical_authority_granted": false,
         "contradiction_pressure": 0.0,
@@ -3570,21 +3577,21 @@
         ],
         "schema": "UNIGURU_SEMANTIC_GOVERNANCE_DECISION_V1"
       },
-      "idempotent_replay": false,
+      "idempotent_replay": true,
       "lineage_traceable": true,
       "mutation_id": "c2f56c78ce76294952c5fccf49b343e2f795425c2483a0fa8c8e2bf424ff1ab4",
       "observability_path": "C:/Users/Yass0/OneDrive/Desktop/uniguru_3/uniguru_v2-main/review_packets/proof_logs/constitutional_semantic_observability.json",
       "observable": true,
       "replay_integrity": {
         "hash_chain_ok": true,
-        "last_event_hash": "7c588607585b5403e108e0c971f444bd03a11c0fff3cc1718c73f6c668679b52",
+        "last_event_hash": "72499fddff766cc6a54ce496aca5973a61e2ef0dfa8680af8a673e260bf98f59",
         "rollback_target": null
       },
       "replayable": true,
       "rollback_safe": true,
       "schema": "UNIGURU_CONSTITUTIONAL_SEMANTIC_MEMORY_RESULT_V1",
-      "state_hash": "9df71c7774864108357c75e33aa310cafbd0804966541a7b9e9132e0205aeea8",
-      "transient_event_count": 2
+      "state_hash": "1cad035e4e4d9ce622d3d83cbaa8e88a9c0b4e50d65067f09e9c7bcaa791548c",
+      "transient_event_count": 18
     },
     "entity_continuity": {},
     "event": {
@@ -3596,7 +3603,7 @@
       "memory_classification": "transient",
       "trace_id": "constitutional_transient_governance",
       "unresolved_thread_opened": true,
-      "updated_at": "2026-05-13T14:06:48.240935Z",
+      "updated_at": "2026-06-29T07:39:45.725899Z",
       "user_id": "constitutional-demo-user"
     },
     "observable": true,
@@ -3610,15 +3617,15 @@
         "rejected_signal_count": 12,
         "state": "open",
         "trace_id": "constitutional_transient_governance",
-        "updated_at": "2026-05-13T14:06:48.240935Z",
+        "updated_at": "2026-06-29T07:39:45.725899Z",
         "user_id": "constitutional-demo-user",
         "verification_status": "NO_VERIFIED_KNOWLEDGE"
       }
     ],
     "user_continuity": {
       "continuity_score": 0.25,
-      "last_seen": "2026-05-13T14:06:48.240935Z",
-      "queries": 5,
+      "last_seen": "2026-06-29T07:39:45.725899Z",
+      "queries": 11,
       "trace_ids": [
         "constitutional_replay_qubit",
         "constitutional_lineage_vishnu",

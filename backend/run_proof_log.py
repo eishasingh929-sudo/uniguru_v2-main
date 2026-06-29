@@ -10,8 +10,11 @@ import json
 import logging
 from datetime import datetime, timezone
 
-# Add backend to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add backend to path — must be at position 0 to prevent root-level retrieval/ shadowing
+_BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
+if _BACKEND_DIR in sys.path:
+    sys.path.remove(_BACKEND_DIR)
+sys.path.insert(0, _BACKEND_DIR)
 
 logging.basicConfig(level=logging.WARNING)
 

@@ -5,11 +5,14 @@ import os
 import sys
 from datetime import datetime, timezone
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+_BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
+if _BACKEND_DIR in sys.path:
+    sys.path.remove(_BACKEND_DIR)
+sys.path.insert(0, _BACKEND_DIR)
 
 from kosha.kosha_loader import KoshaLoader
 from kosha.kosha_retriever import KoshaRetriever
-from backend.retrieval.ontology_retriever import OntologyAwareRetriever
+from retrieval.ontology_retriever import OntologyAwareRetriever
 from ontology.entity_resolver import CanonicalEntityResolver
 
 

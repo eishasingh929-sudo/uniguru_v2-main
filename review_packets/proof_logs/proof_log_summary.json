@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-07T05:34:31.282320+00:00",
+  "generated_at": "2026-06-29T08:22:49.421321+00:00",
   "pipeline": "signal_first_ontology_kosha_v3",
   "total_queries": 15,
   "knowledge_found": 3,
@@ -7,7 +7,7 @@
   "results": [
     {
       "query_number": 1,
-      "trace_id": "trace_a0146485838e5df6",
+      "trace_id": "trace_e8bdf8e299e852dd",
       "query": "What is the Bhagavad Gita?",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -914,7 +914,7 @@
     },
     {
       "query_number": 2,
-      "trace_id": "trace_6ff7c00c47bb57d4",
+      "trace_id": "trace_d8538e7cadec57bb",
       "query": "What does the Bhagavad Gita teach about Karma Yoga?",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -2213,7 +2213,7 @@
     },
     {
       "query_number": 3,
-      "trace_id": "trace_5e4a48787777579a",
+      "trace_id": "trace_a0a018cf306f5f46",
       "query": "Tell me about Vishnu in the Narada Purana",
       "verification_status": "VERIFIED",
       "confidence_breakdown": {
@@ -2341,15 +2341,15 @@
                 "kosha_structuring"
               ]
             },
-            "trace_id": "trace_5e4a48787777579a"
+            "trace_id": "trace_a0a018cf306f5f46"
           },
           "acceptance_reasoning": {
             "signal_id": "signal_15c23a4dedd5",
             "why_accepted": "Accepted after deterministic entity, concept, domain, contextual, tag, content, and confidence checks.",
             "what_matched": {
               "tags": [
-                "vishnu",
-                "purana"
+                "purana",
+                "vishnu"
               ],
               "query_entities": [
                 {
@@ -3402,7 +3402,7 @@
     },
     {
       "query_number": 4,
-      "trace_id": "trace_57e23cecd84257e3",
+      "trace_id": "trace_805a172d84105f17",
       "query": "What is the Padma Purana?",
       "verification_status": "VERIFIED",
       "confidence_breakdown": {
@@ -3520,7 +3520,7 @@
                 "kosha_structuring"
               ]
             },
-            "trace_id": "trace_57e23cecd84257e3"
+            "trace_id": "trace_805a172d84105f17"
           },
           "acceptance_reasoning": {
             "signal_id": "signal_15c23a4dedd5",
@@ -4880,7 +4880,7 @@
     },
     {
       "query_number": 5,
-      "trace_id": "trace_57720fc4b9fe577a",
+      "trace_id": "trace_9fbe8f71a0be5f37",
       "query": "How are rivers like Ganga described in Puranic texts?",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -5671,7 +5671,7 @@
     },
     {
       "query_number": 6,
-      "trace_id": "trace_829bf8c3ece557a0",
+      "trace_id": "trace_122fbe008ba859f4",
       "query": "What guidance do ancient texts provide about kingship and Rajadharma?",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -6573,7 +6573,7 @@
     },
     {
       "query_number": 7,
-      "trace_id": "trace_17a19fff91a45660",
+      "trace_id": "trace_42f52d403c265c29",
       "query": "Explain the Upanishadic concept of Brahman",
       "verification_status": "VERIFIED",
       "confidence_breakdown": {
@@ -6751,7 +6751,7 @@
                 "kosha_structuring"
               ]
             },
-            "trace_id": "trace_17a19fff91a45660"
+            "trace_id": "trace_42f52d403c265c29"
           },
           "acceptance_reasoning": {
             "signal_id": "signal_8c35d7cd1744",
@@ -6916,7 +6916,7 @@
                 "kosha_structuring"
               ]
             },
-            "trace_id": "trace_17a19fff91a45660"
+            "trace_id": "trace_42f52d403c265c29"
           },
           "acceptance_reasoning": {
             "signal_id": "signal_6f913e536412",
@@ -7102,7 +7102,7 @@
                 "kosha_structuring"
               ]
             },
-            "trace_id": "trace_17a19fff91a45660"
+            "trace_id": "trace_42f52d403c265c29"
           },
           "acceptance_reasoning": {
             "signal_id": "signal_b8f48e8c1afd",
@@ -7856,7 +7856,7 @@
     },
     {
       "query_number": 8,
-      "trace_id": "trace_1fb431505e8f5be9",
+      "trace_id": "trace_697af68b3a4c5a36",
       "query": "What does the Mahabharata say about dharma?",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -9119,7 +9119,7 @@
     },
     {
       "query_number": 9,
-      "trace_id": "trace_f34682318caa5fd3",
+      "trace_id": "trace_a72e7b3a4c2f5f6e",
       "query": "Explain temple construction in the Agni Purana",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -10526,7 +10526,7 @@
     },
     {
       "query_number": 10,
-      "trace_id": "trace_f120a91985b55ae5",
+      "trace_id": "trace_5c5fac31b0205c60",
       "query": "What is the role of ecology and water conservation in dharma systems?",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -12283,7 +12283,7 @@
     },
     {
       "query_number": 11,
-      "trace_id": "trace_23e4e08882dd531f",
+      "trace_id": "trace_568424e7fea75cca",
       "query": "Return Upanishads for Bhagavad Gita teachings",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -13317,7 +13317,7 @@
     },
     {
       "query_number": 12,
-      "trace_id": "trace_9e6600f0063554ed",
+      "trace_id": "trace_7440588bbace56f2",
       "query": "Give an Ahimsa answer from the Narada Purana",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -14572,7 +14572,7 @@
     },
     {
       "query_number": 13,
-      "trace_id": "trace_bb94b8e6ff895713",
+      "trace_id": "trace_3576f9c7937553e5",
       "query": "Explain quantum entanglement from the Bhagavad Gita",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -15686,7 +15686,7 @@
     },
     {
       "query_number": 14,
-      "trace_id": "trace_93e9229e6b6c5c8c",
+      "trace_id": "trace_b6f46d11e7785b58",
       "query": "Who won the cricket match yesterday?",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {
@@ -16844,7 +16844,7 @@
     },
     {
       "query_number": 15,
-      "trace_id": "trace_d28f28c9a5a65174",
+      "trace_id": "trace_89cf9bd3ea0b5b7a",
       "query": "What is the current stock price of Apple?",
       "verification_status": "NO_VERIFIED_KNOWLEDGE",
       "confidence_breakdown": {

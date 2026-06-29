@@ -53,8 +53,10 @@
       "rejected_count": 11
     },
     "event": "tantra_uniguru_intelligence_contract",
-    "interpretation_hash": "666a5b54b7637479d7560d46adabe5c58b122097d086631b88432d077276bdb3",
+    "interpretation_hash": "a7d2f162815a8976c34ba5698b2232c2000f7f5fd23b95b2da708c5af3c9e58a",
     "memory_event": {
+      "canonical_authority_granted": true,
+      "constitutional_event_hash": "ee2e34164df66aa894f9464ec3f7c049c2749cbf65848bd7b222f9ce6e1a42e7",
       "contradiction_pressure": 0.0,
       "entities_touched": [
         "Bhagavata Purana",
@@ -63,9 +65,10 @@
         "Padma Purana"
       ],
       "event": "semantic_memory_update",
+      "memory_classification": "canonical",
       "trace_id": "tantra_downstream_vishnu",
       "unresolved_thread_opened": true,
-      "updated_at": "2026-05-08T10:07:23.091187Z",
+      "updated_at": "2026-06-29T07:39:52.470142Z",
       "user_id": "tantra-demo-user"
     },
     "rejected_signals": [
@@ -81,7 +84,7 @@
       "signal_e6e3cabfda0d",
       "signal_3255f05bd9cf"
     ],
-    "retrieval_truth_hash": "2d9887e0582b8e54acc9248b1a60eebd72a7f67f61978f55f3096f205f851387",
+    "retrieval_truth_hash": "852a81ed08cce7928dd6b19ede64950361d0358101263f68b6f2503f8d0d0484",
     "semantic_path": [
       {
         "domain": "puranas",
@@ -106,7 +109,7 @@
         }
       }
     ],
-    "timestamp": "2026-05-08T10:07:23.050147Z",
+    "timestamp": "2026-06-29T07:39:52.300208Z",
     "trace_continuity": {
       "bucket_proof": "tantra_downstream_vishnu",
       "contract_emission": "tantra_downstream_vishnu",
@@ -218,10 +221,10 @@
     "valid_entries": 12
   },
   "fallback_to_llm": false,
-  "generated_at": "2026-05-08T10:07:23.050147Z",
+  "generated_at": "2026-06-29T07:39:52.300208Z",
   "interpretation_payload": {
     "answer": "The main deity praised in the Padma Purana is Vishnu. The Purana contains stories and descriptions of Vishnu's greatness, as well as the greatness of Srimad Bhagavata, which is also associated with Vishnu. Additionally, the text mentions that listening to the Padma Purana can lead to attaining the abode of Vishnu.",
-    "artifact_hash": "666a5b54b7637479d7560d46adabe5c58b122097d086631b88432d077276bdb3",
+    "artifact_hash": "a7d2f162815a8976c34ba5698b2232c2000f7f5fd23b95b2da708c5af3c9e58a",
     "authority_boundary": {
       "free_form_output": false,
       "may_introduce_unreferenced_claims": false,
@@ -287,7 +290,7 @@
         "signal_15c23a4dedd5"
       ],
       "retrieval_trace_id": "tantra_downstream_vishnu",
-      "retrieval_truth_hash": "2d9887e0582b8e54acc9248b1a60eebd72a7f67f61978f55f3096f205f851387"
+      "retrieval_truth_hash": "852a81ed08cce7928dd6b19ede64950361d0358101263f68b6f2503f8d0d0484"
     },
     "trace_id": "tantra_downstream_vishnu",
     "verification_status": "VERIFIED"
@@ -405,9 +408,9 @@
             }
           ],
           "tags": [
-            "vishnu",
+            "padma",
             "purana",
-            "padma"
+            "vishnu"
           ]
         },
         "why_accepted": "Accepted after deterministic entity, concept, domain, contextual, tag, content, and confidence checks."
@@ -550,7 +553,7 @@
     "trace_id": "tantra_downstream_vishnu"
   },
   "query": "What is Vishnu in Padma Purana?",
-  "reasoning": "Accepted signal because tags ['vishnu', 'purana', 'padma'], content overlap 1.00, entity overlap 1.00, domain consistency 1.00, and derived confidence 0.597 met deterministic thresholds.",
+  "reasoning": "Accepted signal because tags ['padma', 'purana', 'vishnu'], content overlap 1.00, entity overlap 1.00, domain consistency 1.00, and derived confidence 0.597 met deterministic thresholds.",
   "reasoning_path": [
     "query_received",
     "kosha_schema_enforced",
@@ -1429,9 +1432,9 @@
               }
             ],
             "tags": [
-              "vishnu",
+              "padma",
               "purana",
-              "padma"
+              "vishnu"
             ]
           },
           "why_accepted": "Accepted after deterministic entity, concept, domain, contextual, tag, content, and confidence checks."
@@ -1515,7 +1518,7 @@
         }
       }
     ],
-    "artifact_hash": "2d9887e0582b8e54acc9248b1a60eebd72a7f67f61978f55f3096f205f851387",
+    "artifact_hash": "852a81ed08cce7928dd6b19ede64950361d0358101263f68b6f2503f8d0d0484",
     "domain_resolution": {
       "confidence": 1.0,
       "domain": "puranas",
@@ -1544,7 +1547,7 @@
       ],
       "method": "canonical_text_entity"
     },
-    "generated_at": "2026-05-08T10:07:23.050147Z",
+    "generated_at": "2026-06-29T07:39:52.300208Z",
     "immutable": true,
     "layer": "DETERMINISTIC_RETRIEVAL_TRUTH",
     "mutation_policy": "READ_ONLY_FOR_INTERPRETATION_LAYER",
@@ -2334,25 +2337,97 @@
     "trace_id": "tantra_downstream_vishnu"
   },
   "semantic_memory": {
+    "canonical_authority_granted": true,
+    "constitutional_governance": {
+      "canonical_authority_granted": true,
+      "canonical_memory_keys": [
+        "Atman",
+        "Bhagavata Purana",
+        "Brahma",
+        "Brahman",
+        "Narada Purana",
+        "Narayana",
+        "Padma Purana",
+        "Taittiriya Upanishad",
+        "Upanishads",
+        "Vedas",
+        "Yoga"
+      ],
+      "checkpoint_path": "C:/Users/Yass0/OneDrive/Desktop/uniguru_3/uniguru_v2-main/review_packets/proof_logs/constitutional_semantic_checkpoint.json",
+      "contradiction_event_count": 1,
+      "event": {
+        "canonical_authority_granted": true,
+        "contradiction_pressure": 0.0,
+        "entities_touched": [
+          "Bhagavata Purana",
+          "Narada Purana",
+          "Narayana",
+          "Padma Purana"
+        ],
+        "event_type": "semantic_mutation_evaluated",
+        "memory_classification": "canonical",
+        "trace_id": "tantra_downstream_vishnu",
+        "updated_at": "2026-06-29T07:39:52.401134Z"
+      },
+      "event_hash": "ee2e34164df66aa894f9464ec3f7c049c2749cbf65848bd7b222f9ce6e1a42e7",
+      "event_log_path": "C:/Users/Yass0/OneDrive/Desktop/uniguru_3/uniguru_v2-main/review_packets/proof_logs/constitutional_semantic_events.jsonl",
+      "governance_decision": {
+        "canonical_authority_granted": true,
+        "confidence_floor": 0.55,
+        "contradiction_pressure": 0.0,
+        "decision": "ACCEPT_CANONICAL_MUTATION",
+        "failure_states": [
+          "PARTIAL_REJECTION_PRESENT"
+        ],
+        "memory_classification": "canonical",
+        "reasons": [],
+        "rules": [
+          "interpretation_never_mutates_retrieval_truth",
+          "canonical_authority_requires_governance_acceptance",
+          "contradictions_are_audit_events_not_silent_merges",
+          "persistent_writes_are_append_only_and_replayable",
+          "ontology_references_preserve_snapshot_lineage"
+        ],
+        "schema": "UNIGURU_SEMANTIC_GOVERNANCE_DECISION_V1"
+      },
+      "idempotent_replay": false,
+      "lineage_traceable": true,
+      "mutation_id": "ea3e7ace324f4727647c611c3e31b06748281f4896e23a9be9ad146a067d2f47",
+      "observability_path": "C:/Users/Yass0/OneDrive/Desktop/uniguru_3/uniguru_v2-main/review_packets/proof_logs/constitutional_semantic_observability.json",
+      "observable": true,
+      "replay_integrity": {
+        "hash_chain_ok": true,
+        "last_event_hash": "ee2e34164df66aa894f9464ec3f7c049c2749cbf65848bd7b222f9ce6e1a42e7",
+        "rollback_target": null
+      },
+      "replayable": true,
+      "rollback_safe": true,
+      "schema": "UNIGURU_CONSTITUTIONAL_SEMANTIC_MEMORY_RESULT_V1",
+      "state_hash": "6c5cdaa4c4170ee087bd774db20e700255c2ca1badcc6aea52d3469da52b1a6d",
+      "transient_event_count": 21
+    },
     "entity_continuity": {
       "Bhagavata Purana": {
         "contradiction_pressure": 0.0,
         "decay_state": "active",
-        "last_seen": "2026-05-08T10:07:23.091187Z",
-        "reinforcement_score": 0.25,
+        "last_seen": "2026-06-29T07:39:52.470142Z",
+        "reinforcement_score": 0.4375,
         "source_ids": [
           "The Narada-Purana, Part 4_ocred.pdf"
         ],
         "trace_ids": [
           "probe_valid_3",
-          "tantra_downstream_vishnu"
+          "tantra_downstream_vishnu",
+          "constitutional_lineage_vishnu",
+          "trace_7b0db6d48c6e562a",
+          "trace_e59800b0fd895bc0"
         ]
       },
       "Narada Purana": {
         "contradiction_pressure": 0.0,
         "decay_state": "active",
-        "last_seen": "2026-05-08T10:07:23.091187Z",
-        "reinforcement_score": 0.4375,
+        "last_seen": "2026-06-29T07:39:52.470142Z",
+        "reinforcement_score": 0.625,
         "source_ids": [
           "The Narada-Purana, Part 3_ocred.pdf",
           "The Narada-Purana, Part 4_ocred.pdf"
@@ -2360,37 +2435,48 @@
         "trace_ids": [
           "probe_valid_0",
           "probe_valid_3",
-          "tantra_downstream_vishnu"
+          "tantra_downstream_vishnu",
+          "constitutional_lineage_vishnu",
+          "trace_7b0db6d48c6e562a",
+          "trace_e59800b0fd895bc0"
         ]
       },
       "Narayana": {
         "contradiction_pressure": 0.0,
         "decay_state": "active",
-        "last_seen": "2026-05-08T10:07:23.091187Z",
-        "reinforcement_score": 0.25,
+        "last_seen": "2026-06-29T07:39:52.470142Z",
+        "reinforcement_score": 0.4375,
         "source_ids": [
           "The Narada-Purana, Part 4_ocred.pdf"
         ],
         "trace_ids": [
           "probe_valid_3",
-          "tantra_downstream_vishnu"
+          "tantra_downstream_vishnu",
+          "constitutional_lineage_vishnu",
+          "trace_7b0db6d48c6e562a",
+          "trace_e59800b0fd895bc0"
         ]
       },
       "Padma Purana": {
         "contradiction_pressure": 0.0,
         "decay_state": "active",
-        "last_seen": "2026-05-08T10:07:23.091187Z",
-        "reinforcement_score": 0.25,
+        "last_seen": "2026-06-29T07:39:52.470142Z",
+        "reinforcement_score": 0.4375,
         "source_ids": [
           "The Narada-Purana, Part 4_ocred.pdf"
         ],
         "trace_ids": [
           "probe_valid_3",
-          "tantra_downstream_vishnu"
+          "tantra_downstream_vishnu",
+          "constitutional_lineage_vishnu",
+          "trace_7b0db6d48c6e562a",
+          "trace_e59800b0fd895bc0"
         ]
       }
     },
     "event": {
+      "canonical_authority_granted": true,
+      "constitutional_event_hash": "ee2e34164df66aa894f9464ec3f7c049c2749cbf65848bd7b222f9ce6e1a42e7",
       "contradiction_pressure": 0.0,
       "entities_touched": [
         "Bhagavata Purana",
@@ -2399,9 +2485,10 @@
         "Padma Purana"
       ],
       "event": "semantic_memory_update",
+      "memory_classification": "canonical",
       "trace_id": "tantra_downstream_vishnu",
       "unresolved_thread_opened": true,
-      "updated_at": "2026-05-08T10:07:23.091187Z",
+      "updated_at": "2026-06-29T07:39:52.470142Z",
       "user_id": "tantra-demo-user"
     },
     "observable": true,
@@ -2415,15 +2502,15 @@
         "rejected_signal_count": 11,
         "state": "open",
         "trace_id": "tantra_downstream_vishnu",
-        "updated_at": "2026-05-08T10:07:23.091187Z",
+        "updated_at": "2026-06-29T07:39:52.470142Z",
         "user_id": "tantra-demo-user",
         "verification_status": "VERIFIED"
       }
     ],
     "user_continuity": {
       "continuity_score": 0.35,
-      "last_seen": "2026-05-08T10:07:23.091187Z",
-      "queries": 15,
+      "last_seen": "2026-06-29T07:39:52.470142Z",
+      "queries": 23,
       "trace_ids": [
         "tantra_replay_qubit",
         "tantra_contradiction_governance",
@@ -2463,9 +2550,9 @@
   "trace_id": "tantra_downstream_vishnu",
   "truth_interpretation_link": {
     "boundary_status": "ENFORCED",
-    "interpretation_hash": "666a5b54b7637479d7560d46adabe5c58b122097d086631b88432d077276bdb3",
+    "interpretation_hash": "a7d2f162815a8976c34ba5698b2232c2000f7f5fd23b95b2da708c5af3c9e58a",
     "interpretation_references_retrieval": true,
-    "retrieval_truth_hash": "2d9887e0582b8e54acc9248b1a60eebd72a7f67f61978f55f3096f205f851387",
+    "retrieval_truth_hash": "852a81ed08cce7928dd6b19ede64950361d0358101263f68b6f2503f8d0d0484",
     "trace_id": "tantra_downstream_vishnu"
   },
   "verification_status": "VERIFIED"

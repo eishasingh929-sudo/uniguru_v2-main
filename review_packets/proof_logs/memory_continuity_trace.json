@@ -19,12 +19,15 @@
     "event": "tantra_uniguru_intelligence_contract",
     "interpretation_hash": "029826565696fbe8b6341034c7807ede4f8b1e9c7fb553e2428d53b3f3256394",
     "memory_event": {
+      "canonical_authority_granted": false,
+      "constitutional_event_hash": "c9ab525bc0518cf8b64d2b746a5a16ccf6267a20baba2973fb65d3afeb24979d",
       "contradiction_pressure": 0.0,
       "entities_touched": [],
       "event": "semantic_memory_update",
+      "memory_classification": "transient",
       "trace_id": "tantra_memory_gita_governance",
       "unresolved_thread_opened": true,
-      "updated_at": "2026-05-08T10:07:22.980685Z",
+      "updated_at": "2026-06-29T07:39:52.191589Z",
       "user_id": "tantra-demo-user"
     },
     "rejected_signals": [
@@ -43,7 +46,7 @@
     ],
     "retrieval_truth_hash": "d482477c8fd6c6edc8716fd027f72b7a5e4148975cbfc642a0d1fc3b662cbd5f",
     "semantic_path": [],
-    "timestamp": "2026-05-08T10:07:22.937293Z",
+    "timestamp": "2026-06-29T07:39:52.102499Z",
     "trace_continuity": {
       "bucket_proof": "tantra_memory_gita_governance",
       "contract_emission": "tantra_memory_gita_governance",
@@ -173,7 +176,7 @@
     "valid_entries": 12
   },
   "fallback_to_llm": false,
-  "generated_at": "2026-05-08T10:07:22.937293Z",
+  "generated_at": "2026-06-29T07:39:52.102499Z",
   "interpretation_payload": {
     "answer": "I do not have verified knowledge to answer this question.",
     "artifact_hash": "029826565696fbe8b6341034c7807ede4f8b1e9c7fb553e2428d53b3f3256394",
@@ -1969,7 +1972,7 @@
       ],
       "method": "canonical_text_entity"
     },
-    "generated_at": "2026-05-08T10:07:22.937293Z",
+    "generated_at": "2026-06-29T07:39:52.102499Z",
     "immutable": true,
     "layer": "DETERMINISTIC_RETRIEVAL_TRUTH",
     "mutation_policy": "READ_ONLY_FOR_INTERPRETATION_LAYER",
@@ -3522,14 +3525,85 @@
     "trace_id": "tantra_memory_gita_governance"
   },
   "semantic_memory": {
+    "canonical_authority_granted": false,
+    "constitutional_governance": {
+      "canonical_authority_granted": false,
+      "canonical_memory_keys": [
+        "Atman",
+        "Bhagavata Purana",
+        "Brahma",
+        "Brahman",
+        "Narada Purana",
+        "Narayana",
+        "Padma Purana",
+        "Taittiriya Upanishad",
+        "Upanishads",
+        "Vedas",
+        "Yoga"
+      ],
+      "checkpoint_path": "C:/Users/Yass0/OneDrive/Desktop/uniguru_3/uniguru_v2-main/review_packets/proof_logs/constitutional_semantic_checkpoint.json",
+      "contradiction_event_count": 1,
+      "event": {
+        "canonical_authority_granted": false,
+        "contradiction_pressure": 0.0,
+        "entities_touched": [],
+        "event_type": "semantic_mutation_evaluated",
+        "memory_classification": "transient",
+        "trace_id": "tantra_memory_gita_governance",
+        "updated_at": "2026-06-29T07:39:52.145379Z"
+      },
+      "event_hash": "c9ab525bc0518cf8b64d2b746a5a16ccf6267a20baba2973fb65d3afeb24979d",
+      "event_log_path": "C:/Users/Yass0/OneDrive/Desktop/uniguru_3/uniguru_v2-main/review_packets/proof_logs/constitutional_semantic_events.jsonl",
+      "governance_decision": {
+        "canonical_authority_granted": false,
+        "confidence_floor": 0.55,
+        "contradiction_pressure": 0.0,
+        "decision": "REJECT_CANONICAL_MUTATION",
+        "failure_states": [
+          "PARTIAL_REJECTION_PRESENT"
+        ],
+        "memory_classification": "transient",
+        "reasons": [
+          "verification_status_not_verified",
+          "no_accepted_signals",
+          "confidence_below_canonical_floor"
+        ],
+        "rules": [
+          "interpretation_never_mutates_retrieval_truth",
+          "canonical_authority_requires_governance_acceptance",
+          "contradictions_are_audit_events_not_silent_merges",
+          "persistent_writes_are_append_only_and_replayable",
+          "ontology_references_preserve_snapshot_lineage"
+        ],
+        "schema": "UNIGURU_SEMANTIC_GOVERNANCE_DECISION_V1"
+      },
+      "idempotent_replay": false,
+      "lineage_traceable": true,
+      "mutation_id": "76c8bcda1c96cda8a5f72738d4967f271c5c04fd6cd45fefef5cbfbbba7f3132",
+      "observability_path": "C:/Users/Yass0/OneDrive/Desktop/uniguru_3/uniguru_v2-main/review_packets/proof_logs/constitutional_semantic_observability.json",
+      "observable": true,
+      "replay_integrity": {
+        "hash_chain_ok": true,
+        "last_event_hash": "c9ab525bc0518cf8b64d2b746a5a16ccf6267a20baba2973fb65d3afeb24979d",
+        "rollback_target": null
+      },
+      "replayable": true,
+      "rollback_safe": true,
+      "schema": "UNIGURU_CONSTITUTIONAL_SEMANTIC_MEMORY_RESULT_V1",
+      "state_hash": "86ce1f872297a50af66f2b432ddbd1bc78d4169290e02cb995bf6457c3eb4627",
+      "transient_event_count": 21
+    },
     "entity_continuity": {},
     "event": {
+      "canonical_authority_granted": false,
+      "constitutional_event_hash": "c9ab525bc0518cf8b64d2b746a5a16ccf6267a20baba2973fb65d3afeb24979d",
       "contradiction_pressure": 0.0,
       "entities_touched": [],
       "event": "semantic_memory_update",
+      "memory_classification": "transient",
       "trace_id": "tantra_memory_gita_governance",
       "unresolved_thread_opened": true,
-      "updated_at": "2026-05-08T10:07:22.980685Z",
+      "updated_at": "2026-06-29T07:39:52.191589Z",
       "user_id": "tantra-demo-user"
     },
     "observable": true,
@@ -3543,20 +3617,21 @@
         "rejected_signal_count": 12,
         "state": "open",
         "trace_id": "tantra_memory_gita_governance",
-        "updated_at": "2026-05-08T10:07:22.980685Z",
+        "updated_at": "2026-06-29T07:39:52.191589Z",
         "user_id": "tantra-demo-user",
         "verification_status": "NO_VERIFIED_KNOWLEDGE"
       }
     ],
     "user_continuity": {
-      "continuity_score": 0.3,
-      "last_seen": "2026-05-08T10:07:22.980685Z",
-      "queries": 13,
+      "continuity_score": 0.35,
+      "last_seen": "2026-06-29T07:39:52.191589Z",
+      "queries": 21,
       "trace_ids": [
         "tantra_replay_qubit",
         "tantra_contradiction_governance",
         "tantra_memory_gita_governance",
-        "tantra_downstream_mahavira"
+        "tantra_downstream_mahavira",
+        "tantra_downstream_vishnu"
       ]
     }
   },
