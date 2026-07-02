@@ -4,7 +4,22 @@ import hashlib
 from .kosha_validator import KoshaEntry
 from governance.source_governance import SourceGovernance
 from ontology.entity_resolver import CanonicalEntityResolver
-from retrieval.ontology_retriever import OntologyAwareRetriever
+
+try:
+    from retrieval.ontology_retriever import OntologyAwareRetriever
+except ModuleNotFoundError:  # pragma: no cover - defensive fallback for local/test environments
+    class OntologyAwareRetriever:
+        def score(self, query: str, candidate: Dict[str, Any]) -> Dict[str, Any]:
+            return {
+                "combined_score": 0.0,
+                "semantic_score": 0.0,
+                "embedding_similarity": 0.0,
+                "embedding_trace": {},
+            }
+
+        def rank(self, query: str, candidates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+            return list(candidates)
+
 
 class KoshaRetriever:
     def __init__(self, entries: List[KoshaEntry]):

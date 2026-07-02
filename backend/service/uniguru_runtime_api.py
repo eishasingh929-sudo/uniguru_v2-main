@@ -25,6 +25,7 @@ from governance.constitutional_runtime import ConstitutionalCognitionRuntime
 from learning_runtime.learning_intelligence import build_learning_intelligence
 from retrieval.retrieval_engine import retrieve_from_masterdb
 from memory.constitutional_semantic_memory import stable_hash, utc_now_iso
+from service.ecosystem_runtime import execute_ecosystem_runtime
 
 
 SCHEMA_VERSION = "UNIGURU_RUNTIME_RESPONSE_CONTRACT_V1"
@@ -252,6 +253,16 @@ def execute_runtime(request: RuntimeRequest) -> Dict[str, Any]:
 @app.post("/runtime/execute")
 def runtime_execute(request: RuntimeRequest) -> Dict[str, Any]:
     return execute_runtime(request)
+
+
+class EcosystemRuntimeRequest(BaseModel):
+    query: str = Field(..., min_length=1, max_length=2000)
+    emit_proof: bool = True
+
+
+@app.post("/runtime/ecosystem/execute")
+def ecosystem_runtime_execute(request: EcosystemRuntimeRequest) -> Dict[str, Any]:
+    return execute_ecosystem_runtime(query=request.query, emit_proof=request.emit_proof)
 
 
 def main() -> None:
