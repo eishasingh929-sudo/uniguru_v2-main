@@ -35,3 +35,30 @@
 - Soham: canonical entity taxonomy and semantic mapping review.
 - Alay: CI wiring for `python backend/run_proof_log.py` and `python backend/run_retrieval_benchmark.py`.
 - Vinayak: deterministic verification of trace continuity across `trace_id`, `output_contract`, `downstream_execution`, and `bucket_proof`.
+# 2026-07-03 BHIV Ecosystem Handover
+
+UniGuru now has a BHIV ecosystem acceptance path with a governed Mitra-facing interface.
+
+## Central Depository Submission
+
+- Primary packet: `review_packets/REVIEW_PACKET.md`
+- Execution summary: `review_packets/execution_summary.md`
+- Acceptance report: `review_packets/validation_reports/ecosystem_acceptance_report.json`
+- API response log: `review_packets/logs/ecosystem_acceptance_api_responses.json`
+- Deployment validation: `review_packets/deployment_proof/ecosystem_deployment_validation.json`
+- Runtime proof: `review_packets/integration_proof/ecosystem_execution_latest.json`
+- Replay proof: `review_packets/integration_proof/replay_verification_latest.json`
+
+## Operational Commands
+
+```powershell
+.venv\Scripts\python.exe -m pytest backend/tests/test_constitutional_runtime.py backend/tests/test_ecosystem_integration.py -q
+.venv\Scripts\python.exe scripts\run_ecosystem_acceptance.py
+```
+
+## Production Notes
+
+- Internal BHIV execution uses `POST /runtime/ecosystem/execute`.
+- Vijay replay acceptance uses `POST /runtime/ecosystem/replay`.
+- Mitra uses `POST /mitra/ecosystem/ask`, which redacts internal governance details.
+- Remote Bucket emission requires deployment environment variables for the Bucket endpoint and token.

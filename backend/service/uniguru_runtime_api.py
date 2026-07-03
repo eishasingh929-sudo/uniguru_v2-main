@@ -25,7 +25,7 @@ from governance.constitutional_runtime import ConstitutionalCognitionRuntime
 from learning_runtime.learning_intelligence import build_learning_intelligence
 from retrieval.retrieval_engine import retrieve_from_masterdb
 from memory.constitutional_semantic_memory import stable_hash, utc_now_iso
-from service.ecosystem_runtime import execute_ecosystem_runtime
+from service.ecosystem_runtime import execute_ecosystem_runtime, verify_ecosystem_replay
 
 
 SCHEMA_VERSION = "UNIGURU_RUNTIME_RESPONSE_CONTRACT_V1"
@@ -258,11 +258,88 @@ def runtime_execute(request: RuntimeRequest) -> Dict[str, Any]:
 class EcosystemRuntimeRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=2000)
     emit_proof: bool = True
+    trace_id: Optional[str] = None
 
 
 @app.post("/runtime/ecosystem/execute")
 def ecosystem_runtime_execute(request: EcosystemRuntimeRequest) -> Dict[str, Any]:
-    return execute_ecosystem_runtime(query=request.query, emit_proof=request.emit_proof)
+    return execute_ecosystem_runtime(
+        query=request.query,
+        emit_proof=request.emit_proof,
+        trace_id=request.trace_id,
+    )
+
+
+@app.post("/runtime/ecosystem/replay")
+def ecosystem_runtime_replay(request: EcosystemRuntimeRequest) -> Dict[str, Any]:
+    return verify_ecosystem_replay(
+        query=request.query,
+        emit_proof=request.emit_proof,
+        trace_id=request.trace_id,
+    )
+
+
+@app.post("/mitra/ecosystem/ask")
+def mitra_ecosystem_ask(request: EcosystemRuntimeRequest) -> Dict[str, Any]:
+    result = execute_ecosystem_runtime(
+        query=request.query,
+        emit_proof=request.emit_proof,
+        trace_id=request.trace_id,
+    )
+    return {
+        "trace_id": result.get("trace_id"),
+        "answer": result.get("answer"),
+        "verification_status": result.get("verification_status"),
+        "confidence": result.get("confidence"),
+        "decision": result.get("bucket_telemetry", {}).get("decision"),
+        "replay_safe": result.get("vijay_validation", {}).get("replay_safe"),
+        "contract_schema": result.get("tantra_contract", {}).get("schema"),
+        "downstream_consumable": result.get("tantra_contract", {}).get("downstream_consumable"),
+        "observability_state": result.get("insightflow_observability", {}).get("observability_state"),
+        "evidence": {
+            "ecosystem_proof": "review_packets/integration_proof/ecosystem_execution_latest.json",
+            "bucket_proof": result.get("bucket_telemetry", {}).get("bucket_path"),
+        },
+    }
+
+
+@app.get("/health")
+def health() -> Dict[str, Any]:
+    return {
+        "status": "ok",
+        "service": "uniguru-ecosystem-runtime",
+        "schema_version": SCHEMA_VERSION,
+        "capabilities": [
+            "runtime_execute",
+            "ecosystem_execute",
+            "ecosystem_replay",
+            "mitra_governed_ask",
+        ],
+    }
+
+
+@app.get("/ready")
+def ready() -> Dict[str, Any]:
+    return {
+        "status": "ready",
+        "proof_dir": str(PROOF_DIR),
+        "masterdb_present": MASTERDB.exists(),
+    }
+
+
+@app.get("/metrics")
+def metrics() -> str:
+    return "\n".join(
+        [
+            "# HELP uniguru_ecosystem_runtime_info Ecosystem runtime capability metadata",
+            "# TYPE uniguru_ecosystem_runtime_info gauge",
+            'uniguru_ecosystem_runtime_info{service="uniguru",capability="bhiv_ecosystem"} 1',
+            "# HELP uniguru_ecosystem_runtime_ready Runtime readiness flag",
+            "# TYPE uniguru_ecosystem_runtime_ready gauge",
+            "uniguru_ecosystem_runtime_ready 1",
+            "",
+        ]
+    )
 
 
 def main() -> None:

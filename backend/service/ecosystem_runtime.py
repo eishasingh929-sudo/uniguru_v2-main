@@ -152,7 +152,7 @@ def _build_mdu_validation(trace_id: str, pipeline_result: Dict[str, Any], vijay_
         "interpretation_hash": interpretation_payload.get("artifact_hash"),
     }
     evidence_payload = {
-        "evidence_id": str(uuid.uuid4()),
+        "evidence_id": str(uuid.uuid5(uuid.NAMESPACE_URL, f"{trace_id}|mdu|runtime_evidence_contract_v1")),
         "textbook_id": "bhiv_internal_intelligence_platform",
         "edition": "2026",
         "chapter": (pipeline_result.get("domain_resolution") or {}).get("domain") or "ecosystem",
@@ -178,9 +178,10 @@ def execute_ecosystem_runtime(
     query: str,
     proof_dir: Optional[Path | str] = None,
     emit_proof: bool = True,
+    trace_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     proof_dir_path = Path(proof_dir or DEFAULT_PROOF_DIR)
-    trace_id = f"ecosystem_{uuid.uuid5(uuid.NAMESPACE_URL, query + '|' + _utc_now_iso()).hex[:12]}"
+    trace_id = trace_id or f"ecosystem_{uuid.uuid5(uuid.NAMESPACE_URL, query + '|' + _utc_now_iso()).hex[:12]}"
 
     from kosha.deterministic_pipeline import run_deterministic_pipeline
 
@@ -218,4 +219,50 @@ def execute_ecosystem_runtime(
         _write_json(proof_dir_path / f"ecosystem_execution_{trace_id}.json", payload)
         _write_json(proof_dir_path / "ecosystem_execution_latest.json", payload)
 
+    return payload
+
+
+def verify_ecosystem_replay(
+    query: str,
+    proof_dir: Optional[Path | str] = None,
+    trace_id: Optional[str] = None,
+    emit_proof: bool = True,
+) -> Dict[str, Any]:
+    replay_trace_id = trace_id or f"ecosystem_replay_{uuid.uuid5(uuid.NAMESPACE_URL, query).hex[:12]}"
+    first = execute_ecosystem_runtime(query=query, proof_dir=proof_dir, emit_proof=False, trace_id=replay_trace_id)
+    replay = execute_ecosystem_runtime(query=query, proof_dir=proof_dir, emit_proof=False, trace_id=replay_trace_id)
+    checks = {
+        "trace_id_stable": first.get("trace_id") == replay.get("trace_id"),
+        "vijay_runtime_hash_stable": first.get("vijay_validation", {}).get("runtime_hash")
+        == replay.get("vijay_validation", {}).get("runtime_hash"),
+        "vijay_last_event_hash_stable": first.get("vijay_validation", {}).get("last_event_hash")
+        == replay.get("vijay_validation", {}).get("last_event_hash"),
+        "tantra_contract_schema_stable": first.get("tantra_contract", {}).get("schema")
+        == replay.get("tantra_contract", {}).get("schema"),
+        "tantra_trace_continuity_stable": first.get("tantra_contract", {}).get("trace_continuity")
+        == replay.get("tantra_contract", {}).get("trace_continuity"),
+        "gc_authority_enforcement_stable": first.get("gc_validation", {}).get("authority_enforced")
+        == replay.get("gc_validation", {}).get("authority_enforced"),
+        "mdu_lineage_hash_stable": first.get("mdu_validation", {}).get("evidence_payload", {}).get("lineage_hash")
+        == replay.get("mdu_validation", {}).get("evidence_payload", {}).get("lineage_hash"),
+    }
+    payload = {
+        "schema": "UNIGURU_ECOSYSTEM_REPLAY_VERIFICATION_V1",
+        "trace_id": replay_trace_id,
+        "query_hash": stable_hash({"query": query})[:16],
+        "generated_at": _utc_now_iso(),
+        "checks": checks,
+        "replay_verified": all(checks.values()),
+        "stable_fields": {
+            "runtime_hash": first.get("vijay_validation", {}).get("runtime_hash"),
+            "last_event_hash": first.get("vijay_validation", {}).get("last_event_hash"),
+            "lineage_hash": first.get("mdu_validation", {}).get("evidence_payload", {}).get("lineage_hash"),
+            "contract_schema": first.get("tantra_contract", {}).get("schema"),
+        },
+    }
+    payload["verification_hash"] = stable_hash(payload)
+    if emit_proof:
+        proof_dir_path = Path(proof_dir or DEFAULT_PROOF_DIR)
+        _write_json(proof_dir_path / f"replay_verification_{replay_trace_id}.json", payload)
+        _write_json(proof_dir_path / "replay_verification_latest.json", payload)
     return payload

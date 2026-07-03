@@ -1,11 +1,11 @@
 {
   "canonical_entity_count": 11,
   "contradiction_event_count": 1,
-  "event_count": 351,
-  "generated_at": "2026-07-02T06:41:40.685199Z",
+  "event_count": 356,
+  "generated_at": "2026-07-03T12:27:30.255190Z",
   "hash_chain_ok": false,
-  "last_event_hash": "7d8c2cba14092d5125011c000bc7acac60a5274c939ca8c3c93798e18fad5822",
+  "last_event_hash": "9e234c2a0f6c7c954e6473a105bcf075672016abd46cf255912d3afeaca47c05",
   "schema": "UNIGURU_CONSTITUTIONAL_SEMANTIC_OBSERVABILITY_V1",
-  "state_hash": "cbdde1e7fd86142bc5b6bcb3261cc150dbb54f164722816b0dc9c31b18a33bb7",
-  "transient_event_count": 267
+  "state_hash": "0c537be7ad51f5d9782f2570cd5b2914151bba7311befe8e05cc067f050c4fb6",
+  "transient_event_count": 272
 }
